@@ -1,16 +1,94 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: user
-  Date: 4/23/2025
-  Time: 10:45 AM
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Title</title>
-</head>
-<body>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare - Login</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
 
+
+        /* Custom Styles */
+        .admin-theme {
+            background: linear-gradient(to bottom, #1e3a8a, #3b82f6);
+        }
+        .user-theme {
+            background: linear-gradient(to bottom, #10b981, #6ee7b7);
+        }
+        .form-container {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+<div id="formContainer" class="form-container w-full max-w-md p-8 rounded-lg shadow-lg text-white admin-theme">
+    <div class="text-center mb-6">
+        <a href="index.jsp" class="text-3xl font-bold">MediCare</a>
+    </div>
+    <h2 id="formTitle" class="text-2xl font-bold mb-6 text-center">Admin Login</h2>
+    <%-- Display error message if present --%>
+    <% if (request.getAttribute("errorMessage") != null) { %>
+    <div class="bg-red-500 text-white p-3 rounded-lg mb-4 text-center">
+        <%= request.getAttribute("errorMessage") %>
+    </div>
+    <% } %>
+    <form action="LoginServlet" method="POST">
+        <div class="mb-4">
+            <label for="username" class="block mb-2">Username</label>
+            <div class="relative">
+                <input type="text" id="username" name="username" class="w-full px-4 py-2 bg-white text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-white" required>
+                <i class="fas fa-user absolute right-3 top-3 text-gray-400"></i>
+            </div>
+        </div>
+        <div class="mb-4">
+            <label for="password" class="block mb-2">Password</label>
+            <div class="relative">
+                <input type="password" id="password" name="password" class="w-full px-4 py-2 bg-white text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-white" required>
+                <i class="fas fa-lock absolute right-3 top-3 text-gray-400"></i>
+            </div>
+        </div>
+        <div class="mb-6">
+            <label for="role" class="block mb-2">Role</label>
+            <select id="role" name="role" class="w-full px-4 py-2 bg-white text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-white" onchange="toggleTheme()" required>
+                <option value="Admin" selected>Admin</option>
+                <option value="User">User</option>
+            </select>
+        </div>
+        <button type="submit" id="loginButton" class="w-full bg-white text-blue-600 py-2 rounded-lg font-semibold hover:bg-gray-100">Login as Admin</button>
+    </form>
+    <div class="mt-4 text-center">
+        <p>Don't have an account? <a href="signup.jsp" class="underline hover:text-gray-200">Sign Up</a></p>
+        <p><a href="index.jsp" class="underline hover:text-gray-200">Back to Home</a></p>
+    </div>
+</div>
+
+<script>
+    function toggleTheme() {
+        const role = document.getElementById('role').value;
+        const formContainer = document.getElementById('formContainer');
+        const formTitle = document.getElementById('formTitle');
+        const loginButton = document.getElementById('loginButton');
+
+        if (role === 'Admin') {
+            formContainer.classList.remove('user-theme');
+            formContainer.classList.add('admin-theme');
+            formTitle.textContent = 'Admin Login';
+            loginButton.textContent = 'Login as Admin';
+            loginButton.classList.remove('text-green-600');
+            loginButton.classList.add('text-blue-600');
+        } else {
+            formContainer.classList.remove('admin-theme');
+            formContainer.classList.add('user-theme');
+            formTitle.textContent = 'User Login';
+            loginButton.textContent = 'Login as User';
+            loginButton.classList.remove('text-blue-600');
+            loginButton.classList.add('text-green-600');
+        }
+    }
+</script>
 </body>
 </html>
