@@ -192,6 +192,8 @@
 
 <!-- JavaScript for Interactivity -->
 <script>
+
+
     // Add to Cart Functionality (Placeholder)
     document.querySelectorAll('.bg-blue-600').forEach(button => {
         button.addEventListener('click', () => {
