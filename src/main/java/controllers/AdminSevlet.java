@@ -1,6 +1,4 @@
 package controllers;
 
-public class AdminSevlet
-
-{
+public class AdminSevlet {
 }
