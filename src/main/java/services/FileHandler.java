@@ -8,6 +8,7 @@ public class FileHandler {
     public boolean authenticateUser(String username, String password, String role) {
         try (BufferedReader reader = new BufferedReader(new FileReader(USERS_FILE))) {
             String line;
+
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
                 if (parts.length == 3 &&
