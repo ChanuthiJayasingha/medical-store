@@ -17,9 +17,6 @@
     h1, h2, h3, h4, h5, h6 {
       font-family: 'Poppins', sans-serif;
     }
-    .admin-bg {
-      background: linear-gradient(to right, #1e3a8a, #3b82f6);
-    }
     .sidebar {
       transition: width 0.3s ease;
     }
@@ -42,6 +39,8 @@
     }
     .sidebar-link i {
       margin-right: 12px;
+      width: 20px;
+      text-align: center;
     }
     .content {
       transition: margin-left 0.3s ease;
@@ -61,11 +60,23 @@
     }
     .modal-content {
       background-color: white;
-      margin: 15% auto;
-      padding: 20px;
-      border-radius: 8px;
+      margin: 10% auto;
+      padding: 24px;
+      border-radius: 12px;
       width: 90%;
-      max-width: 500px;
+      max-width: 600px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .notification {
+      animation: fadeOut 5s forwards;
+    }
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { opacity: 0; display: none; }
+    }
+    input:invalid, select:invalid {
+      border-color: #ef4444;
     }
   </style>
 </head>
@@ -109,6 +120,18 @@
           </a>
         </li>
         <li>
+          <a href="${pageContext.request.contextPath}/ManageFeedbackServlet" class="sidebar-link">
+            <i class="fas fa-comment-dots"></i>
+            <span class="sidebar-text">Manage Feedback</span>
+          </a>
+        </li>
+        <li>
+          <a href="${pageContext.request.contextPath}/ManageAuditServlet" class="sidebar-link">
+            <i class="fas fa-file-alt"></i>
+            <span class="sidebar-text">Audit Logs</span>
+          </a>
+        </li>
+        <li>
           <a href="${pageContext.request.contextPath}/logout" class="sidebar-link">
             <i class="fas fa-sign-out-alt"></i>
             <span class="sidebar-text">Logout</span>
@@ -128,55 +151,58 @@
 
     <section class="bg-white p-6 rounded-lg shadow-lg">
       <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">View Orders</h1>
+        <h1 class="text-2xl font-bold text-gray-800">View Orders</h1>
         <button onclick="openModal('addOrderModal')" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">Add Order</button>
       </div>
 
-      <c:if test="${not empty message}">
-        <p class="text-green-600 mb-4"><c:out value="${message}"/></p>
-      </c:if>
-      <c:if test="${not empty error}">
-        <p class="text-red-600 mb-4"><c:out value="${error}"/></p>
+      <c:if test="${not empty sessionScope.notification}">
+        <div class="notification mb-4 p-4 rounded-lg <c:out value='${sessionScope.notificationType == "success" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}'/>">
+          <c:out value="${sessionScope.notification}"/>
+        </div>
+        <c:remove var="notification" scope="session"/>
+        <c:remove var="notificationType" scope="session"/>
       </c:if>
 
       <c:choose>
         <c:when test="${not empty orders}">
-          <table class="w-full table-auto border-collapse">
-            <thead>
-            <tr class="bg-gray-200">
-              <th class="px-4 py-2 text-left">Order ID</th>
-              <th class="px-4 py-2 text-left">Username</th>
-              <th class="px-4 py-2 text-left">Product ID</th>
-              <th class="px-4 py-2 text-left">Quantity</th>
-              <th class="px-4 py-2 text-left">Status</th>
-              <th class="px-4 py-2 text-left">Order Date</th>
-              <th class="px-4 py-2 text-left">Actions</th>
-            </tr>
-            </thead>
-            <tbody class="table-hover">
-            <c:forEach var="order" items="${orders}">
-              <tr>
-                <td class="border px-4 py-2"><c:out value="${order.orderId}"/></td>
-                <td class="border px-4 py-2"><c:out value="${order.username}"/></td>
-                <td class="border px-4 py-2"><c:out value="${order.productId}"/></td>
-                <td class="border px-4 py-2"><c:out value="${order.quantity}"/></td>
-                <td class="border px-4 py-2"><c:out value="${order.status}"/></td>
-                <td class="border px-4 py-2"><fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd"/></td>
-                <td class="border px-4 py-2">
-                  <button onclick="openEditModal('<c:out value="${order.orderId}"/>', '<c:out value="${order.username}"/>', '<c:out value="${order.productId}"/>', '<c:out value="${order.quantity}"/>', '<c:out value="${order.status}"/>', '<fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd"/>')" class="text-blue-600 hover:text-blue-800 mr-2">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <a href="${pageContext.request.contextPath}/ManageOrdersServlet?action=delete&orderId=<c:out value="${order.orderId}"/>&csrfToken=<c:out value="${sessionScope.csrfToken}"/>" class="text-red-600 hover:text-red-800" onclick="return confirm('Are you sure you want to delete this order?')">
-                    <i class="fas fa-trash"></i>
-                  </a>
-                </td>
+          <div class="overflow-x-auto">
+            <table class="w-full table-auto border-collapse">
+              <thead>
+              <tr class="bg-gray-200">
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Order ID</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Username</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Product ID</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Quantity</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Order Date</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
               </tr>
-            </c:forEach>
-            </tbody>
-          </table>
+              </thead>
+              <tbody class="table-hover">
+              <c:forEach var="order" items="${orders}">
+                <tr>
+                  <td class="border px-4 py-3 text-gray-600"><c:out value="${order.orderId}"/></td>
+                  <td class="border px-4 py-3 text-gray-600"><c:out value="${order.username}"/></td>
+                  <td class="border px-4 py-3 text-gray ASSIGNMENT OF ERROR - "Missing operator, comma, or, '>' at '}' in expression" at line 187, column 65
+                  <td class="border px-4 py-3 text-gray-600"><c:out value="${order.quantity}"/></td>
+                  <td class="border px-4 py-3 text-gray-600"><c:out value="${order.status}"/></td>
+                  <td class="border px-4 py-3 text-gray-600"><fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd"/></td>
+                  <td class="border px-4 py-3">
+                    <button onclick="openEditModal('<c:out value="${order.orderId}"/>', '<c:out value="${order.username}"/>', '<c:out value="${order.productId}"/>', '<c:out value="${order.quantity}"/>', '<c:out value="${order.status}"/>', '<fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd"/>')" class="text-blue-600 hover:text-blue-800 mr-3">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <a href="${pageContext.request.contextPath}/ManageOrdersServlet?action=delete&orderId=<c:out value="${order.orderId}"/>&csrfToken=<c:out value="${sessionScope.csrfToken}"/>" class="text-red-600 hover:text-red-800" onclick="return confirm('Are you sure you want to delete this order?')">
+                      <i class="fas fa-trash"></i>
+                    </a>
+                  </td>
+                </tr>
+              </c:forEach>
+              </tbody>
+            </table>
+          </div>
         </c:when>
         <c:otherwise>
-          <p class="text-gray-600">No orders available.</p>
+          <p class="text-gray-600 text-center py-4">No orders available.</p>
         </c:otherwise>
       </c:choose>
     </section>
@@ -184,37 +210,37 @@
     <!-- Add Order Modal -->
     <div id="addOrderModal" class="modal">
       <div class="modal-content">
-        <h2 class="text-xl font-bold mb-4">Add Order</h2>
-        <form action="${pageContext.request.contextPath}/ManageOrdersServlet" method="post">
+        <h2 class="text-xl font-bold mb-6 text-gray-800">Add Order</h2>
+        <form id="addOrderForm" action="${pageContext.request.contextPath}/ManageOrdersServlet" method="post" onsubmit="return validateOrderForm('addOrderForm')">
           <input type="hidden" name="action" value="add">
           <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
-          <div class="mb-4">
-            <label class="block text-gray-700">Username</label>
-            <input type="text" name="username" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Username</label>
+            <input type="text" name="username" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="50">
           </div>
-          <div class="mb-4">
-            <label class="block text-gray-700">Product ID</label>
-            <input type="text" name="productId" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Product ID</label>
+            <input type="text" name="productId" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="36">
           </div>
-          <div class="mb-4">
-            <label class="block text-gray-700">Quantity</label>
-            <input type="number" name="quantity" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Quantity</label>
+            <input type="number" name="quantity" min="1" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
           </div>
-          <div class="mb-4">
-            <label class="block text-gray-700">Status</label>
-            <select name="status" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Status</label>
+            <select name="status" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="Pending">Pending</option>
               <option value="Shipped">Shipped</option>
               <option value="Delivered">Delivered</option>
             </select>
           </div>
-          <div class="mb-4">
-            <label class="block text-gray-700">Order Date</label>
-            <input type="date" name="orderDate" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Order Date</label>
+            <input type="date" name="orderDate" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
           </div>
           <div class="flex justify-end">
-            <button type="button" onclick="closeModal('addOrderModal')" class="bg-gray-500 text-white px-4 py-2 rounded-full mr-2">Cancel</button>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-full">Add</button>
+            <button type="button" onclick="closeModal('addOrderModal')" class="bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600 transition mr-2">Cancel</button>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">Add Order</button>
           </div>
         </form>
       </div>
@@ -223,38 +249,38 @@
     <!-- Edit Order Modal -->
     <div id="editOrderModal" class="modal">
       <div class="modal-content">
-        <h2 class="text-xl font-bold mb-4">Edit Order</h2>
-        <form action="${pageContext.request.contextPath}/ManageOrdersServlet" method="post">
+        <h2 class="text-xl font-bold mb-6 text-gray-800">Edit Order</h2>
+        <form id="editOrderForm" action="${pageContext.request.contextPath}/ManageOrdersServlet" method="post" onsubmit="return validateOrderForm('editOrderForm')">
           <input type="hidden" name="action" value="update">
           <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
           <input type="hidden" name="orderId" id="editOrderId">
-          <div class="mb-4">
-            <label class="block text-gray-700">Username</label>
-            <input type="text" name="username" id="editUsername" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Username</label>
+            <input type="text" name="username" id="editUsername" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="50">
           </div>
-          <div class="mb-4">
-            <label class="block text-gray-700">Product ID</label>
-            <input type="text" name="productId" id="editProductId" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Product ID</label>
+            <input type="text" name="productId" id="editProductId" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="36">
           </div>
-          <div class="mb-4">
-            <label class="block text-gray-700">Quantity</label>
-            <input type="number" name="quantity" id="editQuantity" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Quantity</label>
+            <input type="number" name="quantity" id="editQuantity" min="1" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
           </div>
-          <div class="mb-4">
-            <label class="block text-gray-700">Status</label>
-            <select name="status" id="editStatus" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Status</label>
+            <select name="status" id="editStatus" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="Pending">Pending</option>
               <option value="Shipped">Shipped</option>
               <option value="Delivered">Delivered</option>
             </select>
           </div>
-          <div class="mb-4">
-            <label class="block text-gray-700">Order Date</label>
-            <input type="date" name="orderDate" id="editOrderDate" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Order Date</label>
+            <input type="date" name="orderDate" id="editOrderDate" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
           </div>
           <div class="flex justify-end">
-            <button type="button" onclick="closeModal('editOrderModal')" class="bg-gray-500 text-white px-4 py-2 rounded-full mr-2">Cancel</button>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-full">Update</button>
+            <button type="button" onclick="closeModal('editOrderModal')" class="bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600 transition mr-2">Cancel</button>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">Update Order</button>
           </div>
         </form>
       </div>
@@ -304,6 +330,16 @@
     document.getElementById('editStatus').value = status;
     document.getElementById('editOrderDate').value = orderDate;
     openModal('editOrderModal');
+  }
+
+  function validateOrderForm(formId) {
+    const form = document.getElementById(formId);
+    const quantity = form.querySelector('input[name="quantity"]').value;
+    if (quantity < 1) {
+      alert('Quantity must be at least 1.');
+      return false;
+    }
+    return true;
   }
 </script>
 </body>
