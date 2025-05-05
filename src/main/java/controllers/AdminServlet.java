@@ -5,9 +5,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.AuditLog;
 import services.FileHandler;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 /**
@@ -45,14 +48,31 @@ public class AdminServlet extends HttpServlet {
         }
 
         try {
+            // Generate CSRF token if not present
+            if (session.getAttribute("csrfToken") == null) {
+                session.setAttribute("csrfToken", UUID.randomUUID().toString());
+            }
+
+            // Log dashboard access
+            AuditLog auditLog = new AuditLog(
+                    UUID.randomUUID().toString(),
+                    (String) session.getAttribute("username"),
+                    "Accessed admin dashboard",
+                    LocalDateTime.now()
+            );
+            fileHandler.addAuditLog(auditLog, getServletContext());
+
+            // Set dashboard metrics
             request.setAttribute("totalProducts", fileHandler.getTotalProducts(getServletContext()));
             request.setAttribute("totalOrders", fileHandler.getTotalOrders(getServletContext()));
             request.setAttribute("activeUsers", fileHandler.getActiveUsers(getServletContext()));
             request.setAttribute("pendingOrders", fileHandler.getPendingOrders(getServletContext()));
+            request.setAttribute("totalFeedback", fileHandler.getTotalFeedback(getServletContext()));
+
             request.getRequestDispatcher("/pages/adminDashboard.jsp").forward(request, response);
         } catch (Exception e) {
             LOGGER.severe("Error processing AdminServlet request: " + e.getMessage());
-            request.setAttribute("error", "An error occurred while loading the dashboard. Please try again later.");
+            request.setAttribute("error", "Failed to load dashboard: " + e.getMessage());
             request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
         }
     }
