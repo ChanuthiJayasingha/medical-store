@@ -17,9 +17,6 @@
     h1, h2, h3, h4, h5, h6 {
       font-family: 'Poppins', sans-serif;
     }
-    .admin-bg {
-      background: linear-gradient(to right, #1e3a8a, #3b82f6);
-    }
     .sidebar {
       transition: width 0.3s ease;
     }
@@ -42,6 +39,8 @@
     }
     .sidebar-link i {
       margin-right: 12px;
+      width: 20px;
+      text-align: center;
     }
     .content {
       transition: margin-left 0.3s ease;
@@ -61,11 +60,23 @@
     }
     .modal-content {
       background-color: white;
-      margin: 15% auto;
-      padding: 20px;
-      border-radius: 8px;
+      margin: 10% auto;
+      padding: 24px;
+      border-radius: 12px;
       width: 90%;
-      max-width: 500px;
+      max-width: 600px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .notification {
+      animation: fadeOut 5s forwards;
+    }
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { opacity: 0; display: none; }
+    }
+    input:invalid, select:invalid {
+      border-color: #ef4444;
     }
   </style>
 </head>
@@ -109,6 +120,18 @@
           </a>
         </li>
         <li>
+          <a href="${pageContext.request.contextPath}/ManageFeedbackServlet" class="sidebar-link">
+            <i class="fas fa-comment-dots"></i>
+            <span class="sidebar-text">Manage Feedback</span>
+          </a>
+        </li>
+        <li>
+          <a href="${pageContext.request.contextPath}/ManageAuditServlet" class="sidebar-link">
+            <i class="fas fa-file-alt"></i>
+            <span class="sidebar-text">Audit Logs</span>
+          </a>
+        </li>
+        <li>
           <a href="${pageContext.request.contextPath}/logout" class="sidebar-link">
             <i class="fas fa-sign-out-alt"></i>
             <span class="sidebar-text">Logout</span>
@@ -128,53 +151,56 @@
 
     <section class="bg-white p-6 rounded-lg shadow-lg">
       <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">Manage Products</h1>
+        <h1 class="text-2xl font-bold text-gray-800">Manage Products</h1>
         <button onclick="openModal('addProductModal')" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">Add Product</button>
       </div>
 
-      <c:if test="${not empty message}">
-        <p class="text-green-600 mb-4"><c:out value="${message}"/></p>
-      </c:if>
-      <c:if test="${not empty error}">
-        <p class="text-red-600 mb-4"><c:out value="${error}"/></p>
+      <c:if test="${not empty sessionScope.notification}">
+        <div class="notification mb-4 p-4 rounded-lg <c:out value='${sessionScope.notificationType == "success" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}'/>">
+          <c:out value="${sessionScope.notification}"/>
+        </div>
+        <c:remove var="notification" scope="session"/>
+        <c:remove var="notificationType" scope="session"/>
       </c:if>
 
       <c:choose>
         <c:when test="${not empty products}">
-          <table class="w-full table-auto border-collapse">
-            <thead>
-            <tr class="bg-gray-200">
-              <th class="px-4 py-2 text-left">Product ID</th>
-              <th class="px-4 py-2 text-left">Name</th>
-              <th class="px-4 py-2 text-left">Description</th>
-              <th class="px-4 py-2 text-left">Price</th>
-              <th class="px-4 py-2 text-left">Stock</th>
-              <th class="px-4 py-2 text-left">Actions</th>
-            </tr>
-            </thead>
-            <tbody class="table-hover">
-            <c:forEach var="product" items="${products}">
-              <tr>
-                <td class="border px-4 py-2"><c:out value="${product.productId}"/></td>
-                <td class="border px-4 py-2"><c:out value="${product.name}"/></td>
-                <td class="border px-4 py-2"><c:out value="${product.description}"/></td>
-                <td class="border px-4 py-2">$<fmt:formatNumber value="${product.price}" type="number" minFractionDigits="2" maxFractionDigits="2"/></td>
-                <td class="border px-4 py-2"><c:out value="${product.stockQuantity}"/></td>
-                <td class="border px-4 py-2">
-                  <button onclick="openEditModal('<c:out value="${product.productId}"/>', '<c:out value="${product.name}"/>', '<c:out value="${product.description}"/>', '<c:out value="${product.price}"/>', '<c:out value="${product.stockQuantity}"/>')" class="text-blue-600 hover:text-blue-800 mr-2">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <a href="${pageContext.request.contextPath}/ManageProductsServlet?action=delete&productId=<c:out value="${product.productId}"/>&csrfToken=<c:out value="${sessionScope.csrfToken}"/>" class="text-red-600 hover:text-red-800" onclick="return confirm('Are you sure you want to delete this product?')">
-                    <i class="fas fa-trash"></i>
-                  </a>
-                </td>
+          <div class="overflow-x-auto">
+            <table class="w-full table-auto border-collapse">
+              <thead>
+              <tr class="bg-gray-200">
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Product ID</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Description</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Price</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Stock</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
               </tr>
-            </c:forEach>
-            </tbody>
-          </table>
+              </thead>
+              <tbody class="table-hover">
+              <c:forEach var="product" items="${products}">
+                <tr>
+                  <td class="border px-4 py-3 text-gray-600"><c:out value="${product.productId}"/></td>
+                  <td class="border px-4 py-3 text-gray-600"><c:out value="${product.name}"/></td>
+                  <td class="border px-4 py-3 text-gray-600"><c:out value="${product.description}"/></td>
+                  <td class="border px-4 py-3 text-gray-600">$<fmt:formatNumber value="${product.price}" type="number" minFractionDigits="2" maxFractionDigits="2"/></td>
+                  <td class="border px-4 py-3 text-gray-600"><c:out value="${product.stockQuantity}"/></td>
+                  <td class="border px-4 py-3">
+                    <button onclick="openEditModal('<c:out value="${product.productId}"/>', '<c:out value="${product.name}"/>', '<c:out value="${product.description}"/>', '<c:out value="${product.price}"/>', '<c:out value="${product.stockQuantity}"/>')" class="text-blue-600 hover:text-blue-800 mr-3">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <a href="${pageContext.request.contextPath}/ManageProductsServlet?action=delete&productId=<c:out value="${product.productId}"/>&csrfToken=<c:out value="${sessionScope.csrfToken}"/>" class="text-red-600 hover:text-red-800" onclick="return confirm('Are you sure you want to delete this product?')">
+                      <i class="fas fa-trash"></i>
+                    </a>
+                  </td>
+                </tr>
+              </c:forEach>
+              </tbody>
+            </table>
+          </div>
         </c:when>
         <c:otherwise>
-          <p class="text-gray-600">No products available.</p>
+          <p class="text-gray-600 text-center py-4">No products available.</p>
         </c:otherwise>
       </c:choose>
     </section>
@@ -182,29 +208,29 @@
     <!-- Add Product Modal -->
     <div id="addProductModal" class="modal">
       <div class="modal-content">
-        <h2 class="text-xl font-bold mb-4">Add Product</h2>
-        <form action="${pageContext.request.contextPath}/ManageProductsServlet" method="post">
+        <h2 class="text-xl font-bold mb-6 text-gray-800">Add Product</h2>
+        <form id="addProductForm" action="${pageContext.request.contextPath}/ManageProductsServlet" method="post" onsubmit="return validateProductForm('addProductForm')">
           <input type="hidden" name="action" value="add">
           <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
-          <div class="mb-4">
-            <label class="block text-gray-700">Name</label>
-            <input type="text" name="name" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Name</label>
+            <input type="text" name="name" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="100">
           </div>
-          <div class="mb-4">
-            <label class="block text-gray-700">Description</label>
-            <textarea name="description" class="w-full px-3 py-2 border rounded-lg"></textarea>
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Description</label>
+            <textarea name="description" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" maxlength="500"></textarea>
           </div>
-          <div class="mb-4">
-            <label class="block text-gray-700">Price</label>
-            <input type="number" name="price" step="0.01" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Price</label>
+            <input type="number" name="price" step="0.01" min="0" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
           </div>
-          <div class="mb-4">
-            <label class="block text-gray-700">Stock Quantity</label>
-            <input type="number" name="stockQuantity" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Stock Quantity</label>
+            <input type="number" name="stockQuantity" min="0" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
           </div>
           <div class="flex justify-end">
-            <button type="button" onclick="closeModal('addProductModal')" class="bg-gray-500 text-white px-4 py-2 rounded-full mr-2">Cancel</button>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-full">Add</button>
+            <button type="button" onclick="closeModal('addProductModal')" class="bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600 transition mr-2">Cancel</button>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">Add Product</button>
           </div>
         </form>
       </div>
@@ -213,30 +239,30 @@
     <!-- Edit Product Modal -->
     <div id="editProductModal" class="modal">
       <div class="modal-content">
-        <h2 class="text-xl font-bold mb-4">Edit Product</h2>
-        <form action="${pageContext.request.contextPath}/ManageProductsServlet" method="post">
+        <h2 class="text-xl font-bold mb-6 text-gray-800">Edit Product</h2>
+        <form id="editProductForm" action="${pageContext.request.contextPath}/ManageProductsServlet" method="post" onsubmit="return validateProductForm('editProductForm')">
           <input type="hidden" name="action" value="update">
           <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
           <input type="hidden" name="productId" id="editProductId">
-          <div class="mb-4">
-            <label class="block text-gray-700">Name</label>
-            <input type="text" name="name" id="editName" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Name</label>
+            <input type="text" name="name" id="editName" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="100">
           </div>
-          <div class="mb-4">
-            <label class="block text-gray-700">Description</label>
-            <textarea name="description" id="editDescription" class="w-full px-3 py-2 border rounded-lg"></textarea>
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Description</label>
+            <textarea name="description" id="editDescription" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" maxlength="500"></textarea>
           </div>
-          <div class="mb-4">
-            <label class="block text-gray-700">Price</label>
-            <input type="number" name="price" id="editPrice" step="0.01" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Price</label>
+            <input type="number" name="price" id="editPrice" step="0.01" min="0" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
           </div>
-          <div class="mb-4">
-            <label class="block text-gray-700">Stock Quantity</label>
-            <input type="number" name="stockQuantity" id="editStockQuantity" required class="w-full px-3 py-2 border rounded-lg">
+          <div class="mb-5">
+            <label class="block text-gray-700 font-medium mb-1">Stock Quantity</label>
+            <input type="number" name="stockQuantity" id="editStockQuantity" min="0" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
           </div>
           <div class="flex justify-end">
-            <button type="button" onclick="closeModal('editProductModal')" class="bg-gray-500 text-white px-4 py-2 rounded-full mr-2">Cancel</button>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-full">Update</button>
+            <button type="button" onclick="closeModal('editProductModal')" class="bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600 transition mr-2">Cancel</button>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">Update Product</button>
           </div>
         </form>
       </div>
@@ -285,6 +311,21 @@
     document.getElementById('editPrice').value = price;
     document.getElementById('editStockQuantity').value = stockQuantity;
     openModal('editProductModal');
+  }
+
+  function validateProductForm(formId) {
+    const form = document.getElementById(formId);
+    const price = form.querySelector('input[name="price"]').value;
+    const stock = form.querySelector('input[name="stockQuantity"]').value;
+    if (price < 0) {
+      alert('Price cannot be negative.');
+      return false;
+    }
+    if (stock < 0) {
+      alert('Stock quantity cannot be negative.');
+      return false;
+    }
+    return true;
   }
 </script>
 </body>
