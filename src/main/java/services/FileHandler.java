@@ -6,7 +6,6 @@ import model.Product;
 import model.User;
 import model.Feedback;
 import model.AuditLog;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -51,7 +50,7 @@ public class FileHandler {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",", -1);
-                if (parts.length >= 9 && parts[1].equals(username) && BCrypt.checkpw(password, parts[2]) && parts[3].equals(role)) {
+                if (parts.length >= 9 && parts[1].equals(username) && parts[2].equals(password) && parts[3].equals(role)) {
                     return true;
                 }
             }
@@ -65,7 +64,7 @@ public class FileHandler {
     }
 
     /**
-     * Registers a new user by appending to users.txt with hashed password.
+     * Registers a new user by appending to users.txt with plain text password.
      */
     public boolean registerUser(User user, ServletContext context) {
         lock.writeLock().lock();
@@ -76,9 +75,8 @@ public class FileHandler {
                 LOGGER.warning("Username already exists: " + user.getUsername());
                 return false;
             }
-            String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
             String userData = String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s%n",
-                    user.getFullName(), user.getUsername(), hashedPassword, user.getRole(),
+                    user.getFullName(), user.getUsername(), user.getPassword(), user.getRole(),
                     user.getContactNo(), user.getEmail(), user.getAddress(),
                     user.getBirthday().format(DATE_FORMATTER), user.getGender());
             Files.write(path, userData.getBytes(), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
