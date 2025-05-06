@@ -184,7 +184,14 @@
                                     <td class="border px-4 py-3 text-gray-600"><c:out value="${feedback.username}"/></td>
                                     <td class="border px-4 py-3 text-gray-600"><c:out value="${feedback.comment}"/></td>
                                     <td class="border px-4 py-3 text-gray-600"><c:out value="${feedback.rating}"/></td>
-                                    <td class="border px-4 py-3 text-gray-600"><fmt:formatDate value="${feedback.submissionDate}" pattern="yyyy-MM-dd"/></td>
+                                    <td class="border px-4 py-3 text-gray-600">
+                                        <c:choose>
+                                            <c:when test="${not empty feedback.submissionDate}">
+                                                <c:out value="${feedback.submissionDate}"/>
+                                            </c:when>
+                                            <c:otherwise>N/A</c:otherwise>
+                                        </c:choose>
+                                    </td>
                                     <td class="border px-4 py-3">
                                         <a href="${pageContext.request.contextPath}/ManageFeedbackServlet?action=delete&feedbackId=<c:out value="${feedback.feedbackId}"/>&csrfToken=<c:out value="${sessionScope.csrfToken}"/>" class="text-red-600 hover:text-red-800" onclick="return confirm('Are you sure you want to delete this feedback?')">
                                             <i class="fas fa-trash"></i>
@@ -223,7 +230,7 @@
                     </div>
                     <div class="mb-5">
                         <label class="block text-gray-700 font-medium mb-1">Submission Date</label>
-                        <input type="date" name="submissionDate" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="date" name="submissionDate" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" max="<%= java.time.LocalDate.now() %>">
                     </div>
                     <div class="flex justify-end">
                         <button type="button" onclick="closeModal('addFeedbackModal')" class="bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600 transition mr-2">Cancel</button>
@@ -273,12 +280,18 @@
         const form = document.getElementById(formId);
         const rating = form.querySelector('input[name="rating"]').value;
         const username = form.querySelector('input[name="username"]').value;
-        if (rating < 1 || rating > 5) {
-            alert('Rating must be between 1 and 5.');
-            return false;
-        }
+        const comment = form.querySelector('textarea[name="comment"]').value;
+
         if (!/^[a-zA-Z0-9_]+$/.test(username)) {
             alert('Username can only contain letters, numbers, and underscores.');
+            return false;
+        }
+        if (comment.trim().length === 0 || comment.length > 500) {
+            alert('Comment must be between 1 and 500 characters.');
+            return false;
+        }
+        if (rating < 1 || rating > 5) {
+            alert('Rating must be between 1 and 5.');
             return false;
         }
         return true;

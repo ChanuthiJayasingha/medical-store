@@ -5,15 +5,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.AuditLog;
+import services.AuditService;
+import services.BackupService;
 import services.FileHandler;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -22,12 +23,16 @@ import java.util.logging.Logger;
 public class ManageAuditServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(ManageAuditServlet.class.getName());
-    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private FileHandler fileHandler;
+    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+    private AuditService auditService;
+    private BackupService backupService;
 
     @Override
     public void init() throws ServletException {
-        fileHandler = new FileHandler(getServletContext().getRealPath("/data/audit.txt"));
+        String basePath = getServletContext().getRealPath("/data/");
+        FileHandler auditFileHandler = new FileHandler(basePath + "audit.txt");
+        auditService = new AuditService(auditFileHandler);
+        backupService = new BackupService(basePath, auditService);
     }
 
     @Override
@@ -46,47 +51,88 @@ public class ManageAuditServlet extends HttpServlet {
                 session.setAttribute("csrfToken", UUID.randomUUID().toString());
             }
 
-            // Log audit access
-            String auditLine = String.join(",",
-                    UUID.randomUUID().toString(),
-                    (String) session.getAttribute("username"),
-                    "Accessed audit logs",
-                    LocalDateTime.now().format(DATETIME_FORMATTER));
-            List<String> auditLines = fileHandler.readLines();
-            auditLines.add(auditLine);
-            fileHandler.writeLines(auditLines);
+            // Log access to audit logs
+            String username = (String) session.getAttribute("username");
+            String logId = generateAuditId();
+            String auditLine = String.format("AUD%s: Accessed audit logs performed by %s at %s",
+                    logId, username, LocalDateTime.now().format(DATETIME_FORMATTER));
+            auditService.addAuditLog(auditLine);
 
-            // Parse audit logs
-            List<AuditLog> auditLogs = new ArrayList<>();
-            for (String line : auditLines) {
-                String[] parts = line.split(",", -1);
-                if (parts.length >= 4) {
-                    try {
-                        auditLogs.add(new AuditLog(
-                                parts[0], // logId
-                                parts[1], // username
-                                parts[2], // action
-                                LocalDateTime.parse(parts[3], DATETIME_FORMATTER) // timestamp
-                        ));
-                    } catch (Exception e) {
-                        LOGGER.warning("Invalid audit log data: " + line);
-                    }
-                }
-            }
-
+            // Read audit logs
+            List<String> auditLogs = auditService.readAuditLogs();
             request.setAttribute("auditLogs", auditLogs);
             request.getRequestDispatcher("/pages/manage-audit.jsp").forward(request, response);
-        } catch (Exception e) {
-            LOGGER.severe("Error processing ManageAuditServlet GET request: " + e.getMessage());
-            request.setAttribute("message", "Failed to load audit logs: " + e.getMessage());
-            request.setAttribute("messageType", "error");
-            request.getRequestDispatcher("/pages/manage-audit.jsp").forward(request, response);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error reading audit logs", e);
+            session.setAttribute("notification", "Error: " + e.getMessage());
+            session.setAttribute("notificationType", "error");
+            request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("username") == null || !"Admin".equals(session.getAttribute("role"))) {
+            LOGGER.warning("Unauthorized access attempt to ManageAuditServlet");
+            response.sendRedirect(request.getContextPath() + "/pages/login.jsp");
+            return;
+        }
+
+        try {
+            String csrfToken = request.getParameter("csrfToken");
+            if (csrfToken == null || !csrfToken.equals(session.getAttribute("csrfToken"))) {
+                LOGGER.warning("CSRF token validation failed");
+                session.setAttribute("notification", "Invalid CSRF token.");
+                session.setAttribute("notificationType", "error");
+                response.sendRedirect(request.getContextPath() + "/ManageAuditServlet");
+                return;
+            }
+
+            String action = request.getParameter("action");
+            String username = (String) session.getAttribute("username");
+
+            if ("backup".equals(action)) {
+                backupService.createBackup(username);
+                String logId = generateAuditId();
+                String auditLine = String.format("AUD%s: Backup created performed by %s at %s",
+                        logId, username, LocalDateTime.now().format(DATETIME_FORMATTER));
+                auditService.addAuditLog(auditLine);
+                session.setAttribute("notification", "Backup created successfully.");
+                session.setAttribute("notificationType", "success");
+            } else if ("clearLogs".equals(action)) {
+                auditService.clearAuditLogs();
+                String logId = generateAuditId();
+                String auditLine = String.format("AUD%s: Cleared audit logs performed by %s at %s",
+                        logId, username, LocalDateTime.now().format(DATETIME_FORMATTER));
+                auditService.addAuditLog(auditLine);
+                session.setAttribute("notification", "Audit logs cleared successfully.");
+                session.setAttribute("notificationType", "success");
+            } else {
+                LOGGER.warning("Invalid action: " + action);
+                session.setAttribute("notification", "Invalid action specified.");
+                session.setAttribute("notificationType", "error");
+            }
+
+            response.sendRedirect(request.getContextPath() + "/ManageAuditServlet");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error processing action", e);
+            session.setAttribute("notification", "Error: " + e.getMessage());
+            session.setAttribute("notificationType", "error");
+            response.sendRedirect(request.getContextPath() + "/ManageAuditServlet");
+        }
+    }
+
+    private String generateAuditId() throws IOException {
+        List<String> logs = auditService.readAuditLogs();
+        int maxId = 0;
+        for (String log : logs) {
+            if (log.matches("^AUD\\d{3}: .+")) {
+                int idNum = Integer.parseInt(log.substring(3, 6));
+                maxId = Math.max(maxId, idNum);
+            }
+        }
+        return String.format("%03d", maxId + 1);
     }
 }

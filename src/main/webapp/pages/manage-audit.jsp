@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,25 +47,6 @@
         .table-hover tr:hover {
             background-color: #f1f5f9;
         }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 1000;
-        }
-        .modal-content {
-            background-color: white;
-            margin: 10% auto;
-            padding: 24px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        }
         .notification {
             animation: fadeOut 5s forwards;
         }
@@ -74,9 +54,6 @@
             0% { opacity: 1; }
             80% { opacity: 1; }
             100% { opacity: 0; display: none; }
-        }
-        input:invalid, select:invalid {
-            border-color: #ef4444;
         }
     </style>
 </head>
@@ -152,10 +129,26 @@
         <section class="bg-white p-6 rounded-lg shadow-lg">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-bold text-gray-800">Audit Logs</h1>
+                <div class="flex gap-4">
+                    <form action="${pageContext.request.contextPath}/ManageAuditServlet" method="post">
+                        <input type="hidden" name="action" value="backup">
+                        <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                            <i class="fas fa-download mr-2"></i>Create Backup
+                        </button>
+                    </form>
+                    <form action="${pageContext.request.contextPath}/ManageAuditServlet" method="post">
+                        <input type="hidden" name="action" value="clearLogs">
+                        <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
+                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+                            <i class="fas fa-trash mr-2"></i>Clear Audit Logs
+                        </button>
+                    </form>
+                </div>
             </div>
 
             <c:if test="${not empty sessionScope.notification}">
-                <div class="notification mb-4 p-4 rounded-lg <c:out value='${sessionScope.notificationType == "success" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}'/>">
+                <div class="notification mb-4 p-4 rounded-lg ${sessionScope.notificationType == 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
                     <c:out value="${sessionScope.notification}"/>
                 </div>
                 <c:remove var="notification" scope="session"/>
@@ -171,18 +164,23 @@
                                 <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Audit ID</th>
                                 <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Username</th>
                                 <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Action</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Description</th>
                                 <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Timestamp</th>
                             </tr>
                             </thead>
                             <tbody class="table-hover">
-                            <c:forEach var="audit" items="${auditLogs}">
+                            <c:forEach var="log" items="${auditLogs}">
+                                <c:set var="parts" value="${fn:split(log, ': ')}"/>
+                                <c:set var="auditId" value="${parts[0]}"/>
+                                <c:set var="details" value="${fn:split(parts[1], ' performed by ')}"/>
+                                <c:set var="action" value="${details[0]}"/>
+                                <c:set var="userTime" value="${fn:split(details[1], ' at ')}"/>
+                                <c:set var="username" value="${userTime[0]}"/>
+                                <c:set var="timestamp" value="${userTime[1]}"/>
                                 <tr>
-                                    <td class="border px-4 py-3 text-gray-600"><c:out value="${audit.auditId}"/></td>
-                                    <td class="border px-4 py-3 text-gray-600"><c:out value="${audit.username}"/></td>
-                                    <td class="border px-4 py-3 text-gray-600"><c:out value="${audit.action}"/></td>
-                                    <td class="border px-4 py-3 text-gray-600"><c:out value="${audit.description}"/></td>
-                                    <td class="border px-4 py-3 text-gray-600"><fmt:formatDate value="${audit.timestamp}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                                    <td class="border px-4 py-3 text-gray-600"><c:out value="${auditId}"/></td>
+                                    <td class="border px-4 py-3 text-gray-600"><c:out value="${username}"/></td>
+                                    <td class="border px-4 py-3 text-gray-600"><c:out value="${action}"/></td>
+                                    <td class="border px-4 py-3 text-gray-600"><c:out value="${timestamp}"/></td>
                                 </tr>
                             </c:forEach>
                             </tbody>
@@ -206,21 +204,23 @@
 </footer>
 
 <script>
-    const sidebar = document.getElementById('sidebar');
-    const toggleSidebar = document.getElementById('toggleSidebar');
-    const content = document.querySelector('.content');
-    const sidebarTexts = document.querySelectorAll('.sidebar-text');
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const content = document.querySelector('.content');
+        const sidebarTexts = document.querySelectorAll('.sidebar-text');
 
-    toggleSidebar.addEventListener('click', () => {
-        sidebar.classList.toggle('sidebar-expanded');
-        sidebar.classList.toggle('sidebar-collapsed');
-        if (sidebar.classList.contains('sidebar-collapsed')) {
-            content.style.marginLeft = '80px';
-            sidebarTexts.forEach(text => text.style.display = 'none');
-        } else {
-            content.style.marginLeft = '250px';
-            sidebarTexts.forEach(text => text.style.display = 'inline');
-        }
+        toggleSidebar.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-expanded');
+            sidebar.classList.toggle('sidebar-collapsed');
+            if (sidebar.classList.contains('sidebar-collapsed')) {
+                content.style.marginLeft = '80px';
+                sidebarTexts.forEach(text => text.style.display = 'none');
+            } else {
+                content.style.marginLeft = '250px';
+                sidebarTexts.forEach(text => text.style.display = 'inline');
+            }
+        });
     });
 </script>
 </body>
