@@ -11,6 +11,8 @@ public class Product {
     private String description;
     private double price;
     private int stockQuantity;
+    private String imageUrl;
+    private String category;
 
     /**
      * Constructs a Product with the specified details.
@@ -20,21 +22,28 @@ public class Product {
      * @param description   Description of the product
      * @param price         Price of the product
      * @param stockQuantity Available stock quantity
+     * @param imageUrl      URL or path to the product image
+     * @param category      Category of the product
      * @throws IllegalArgumentException if any parameter is invalid
      */
-    public Product(String productId, String name, String description, double price, int stockQuantity) {
+    public Product(String productId, String name, String description, double price, int stockQuantity, String imageUrl, String category) {
         validateProductId(productId);
         validateName(name);
         validatePrice(price);
         validateStockQuantity(stockQuantity);
+        validateImageUrl(imageUrl);
+        validateCategory(category);
 
         this.productId = productId;
         this.name = name;
         this.description = description != null ? description : "";
         this.price = price;
         this.stockQuantity = stockQuantity;
+        this.imageUrl = imageUrl != null ? imageUrl : "";
+        this.category = category != null ? category : "Uncategorized";
     }
 
+    // Getters
     public String getProductId() {
         return productId;
     }
@@ -55,48 +64,45 @@ public class Product {
         return stockQuantity;
     }
 
-    /**
-     * Sets the name of the product.
-     *
-     * @param name The new name
-     * @throws IllegalArgumentException if name is invalid
-     */
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    // Setters
     public void setName(String name) {
         validateName(name);
         this.name = name;
     }
 
-    /**
-     * Sets the description of the product.
-     *
-     * @param description The new description
-     */
     public void setDescription(String description) {
         this.description = description != null ? description : "";
     }
 
-    /**
-     * Sets the price of the product.
-     *
-     * @param price The new price
-     * @throws IllegalArgumentException if price is invalid
-     */
     public void setPrice(double price) {
         validatePrice(price);
         this.price = price;
     }
 
-    /**
-     * Sets the stock quantity of the product.
-     *
-     * @param stockQuantity The new stock quantity
-     * @throws IllegalArgumentException if stock quantity is invalid
-     */
     public void setStockQuantity(int stockQuantity) {
         validateStockQuantity(stockQuantity);
         this.stockQuantity = stockQuantity;
     }
 
+    public void setImageUrl(String imageUrl) {
+        validateImageUrl(imageUrl);
+        this.imageUrl = imageUrl != null ? imageUrl : "";
+    }
+
+    public void setCategory(String category) {
+        validateCategory(category);
+        this.category = category != null ? category : "Uncategorized";
+    }
+
+    // Validation methods
     private void validateProductId(String productId) {
         if (productId == null || productId.trim().isEmpty()) {
             throw new IllegalArgumentException("Product ID cannot be null or empty");
@@ -121,10 +127,24 @@ public class Product {
         }
     }
 
+    private void validateImageUrl(String imageUrl) {
+        // Optional: Add URL format validation if needed
+        if (imageUrl != null && imageUrl.trim().isEmpty()) {
+            throw new IllegalArgumentException("Image URL cannot be empty if provided");
+        }
+    }
+
+    private void validateCategory(String category) {
+        // Optional: Add specific category validation if needed
+        if (category != null && category.trim().isEmpty()) {
+            throw new IllegalArgumentException("Category cannot be empty if provided");
+        }
+    }
+
     @Override
     public String toString() {
-        return String.format("Product{productId='%s', name='%s', description='%s', price=%.2f, stockQuantity=%d}",
-                productId, name, description, price, stockQuantity);
+        return String.format("Product{productId='%s', name='%s', description='%s', price=%.2f, stockQuantity=%d, imageUrl='%s', category='%s'}",
+                productId, name, description, price, stockQuantity, imageUrl, category);
     }
 
     @Override
