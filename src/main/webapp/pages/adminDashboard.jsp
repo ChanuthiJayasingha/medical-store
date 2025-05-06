@@ -151,7 +151,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h1 class="text-3xl font-bold mb-8 text-center">Dashboard Overview</h1>
                 <div class="dashboard-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-                    <div class="dashboard-card bg-white text-gray-800 p-6 rounded-lg shadow-md text-center" role="button" tabindex="0" onclick="window.location.href='${pageContext.request.contextPath}/AdminServlet'" onkeydown="if(event.key === 'Enter') window.location.href='${pageContext.request.contextPath}/AdminServlet'">
+                    <div class="dashboard-card bg-white text-gray-800 p-6 rounded-lg shadow-md text-center" role="button" tabindex="0" onclick="window.location.href='${pageContext.request.contextPath}/ManageProductsServlet'" onkeydown="if(event.key === 'Enter') window.location.href='${pageContext.request.contextPath}/ManageProductsServlet'">
                         <i class="fas fa-pills text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
                         <h3 class="text-xl font-semibold mb-2">Total Products</h3>
                         <p class="text-2xl font-bold text-gray-600"><c:out value="${totalProducts}" default="0"/></p>
@@ -188,31 +188,31 @@
                         <i class="fas fa-pills text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
                         <h3 class="text-xl font-semibold mb-2">Manage Products</h3>
                         <p class="text-gray-600 mb-4">Add, update, or remove products from the store.</p>
-                        <a href="${pageContext.request.contextPath}/pages/manage-products.jsp" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Products</a>
+                        <a href="${pageContext.request.contextPath}/ManageProductsServlet" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Products</a>
                     </div>
                     <div class="card-hover bg-white text-gray-800 p-6 rounded-lg shadow-md transition duration-300">
                         <i class="fas fa-clipboard-list text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
                         <h3 class="text-xl font-semibold mb-2">View Orders</h3>
                         <p class="text-gray-600 mb-4">Check and manage customer orders.</p>
-                        <a href="${pageContext.request.contextPath}/pages/view-orders.jsp" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Orders</a>
+                        <a href="${pageContext.request.contextPath}/ManageOrdersServlet" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Orders</a>
                     </div>
                     <div class="card-hover bg-white text-gray-800 p-6 rounded-lg shadow-md transition duration-300">
                         <i class="fas fa-users text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
                         <h3 class="text-xl font-semibold mb-2">Manage Users</h3>
                         <p class="text-gray-600 mb-4">View and manage user accounts.</p>
-                        <a href="${pageContext.request.contextPath}/pages/manage-users.jsp" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Users</a>
+                        <a href="${pageContext.request.contextPath}/ManageUsersServlet" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Users</a>
                     </div>
                     <div class="card-hover bg-white text-gray-800 p-6 rounded-lg shadow-md transition duration-300">
-                        <i class="fas(PRIVATE) fa-comment-dots text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
+                        <i class="fas fa-comment-dots text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
                         <h3 class="text-xl font-semibold mb-2">Manage Feedback</h3>
                         <p class="text-gray-600 mb-4">Review and respond to customer feedback.</p>
-                        <a href="${pageContext.request.contextPath}/pages/manage-feedback.jsp" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Feedback</a>
+                        <a href="${pageContext.request.contextPath}/ManageFeedbackServlet" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Feedback</a>
                     </div>
                     <div class="card-hover bg-white text-gray-800 p-6 rounded-lg shadow-md transition duration-300">
                         <i class="fas fa-file-alt text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
                         <h3 class="text-xl font-semibold mb-2">Audit Logs</h3>
                         <p class="text-gray-600 mb-4">View system activity and audit logs.</p>
-                        <a href="${pageContext.request.contextPath}/pages/manage-audit.jsp" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Audits</a>
+                        <a href="${pageContext.request.contextPath}/ManageAuditServlet" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Audits</a>
                     </div>
                 </div>
             </div>
@@ -269,13 +269,6 @@
 
         // Expose showNotification to global scope for server-side calls
         window.showNotification = showNotification;
-
-        <%--// Example: Show notification if there's a session message--%>
-        <%--    <c:if test="${ <c:if test="${not empty sessionScope.notification}">--%>
-        <%--showNotification('${fn:escapeXml(sessionScope.notification)}', '${fn:escapeXml(sessionScope.notificationType)}');--%>
-        <%--<c:remove var="notification" scope="session"/>--%>
-        <%--<c:remove var="notificationType" scope="session"/>--%>
-        <%--</c:if>--%>
     })();
 </script>
 </body>
