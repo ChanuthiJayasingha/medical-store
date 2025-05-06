@@ -4,9 +4,6 @@ import jakarta.servlet.ServletContext;
 import model.Order;
 import model.Product;
 import model.User;
-import model.Feedback;
-import model.AuditLog;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -14,7 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +18,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Handles file-based data operations for the MediCare system.
@@ -31,10 +28,7 @@ public class FileHandler {
     private static final String USERS_FILE = "/data/users.txt";
     private static final String PRODUCTS_FILE = "/data/products.txt";
     private static final String ORDERS_FILE = "/data/orders.txt";
-    private static final String FEEDBACK_FILE = "/data/feedback.txt";
-    private static final String AUDIT_FILE = "/data/audit.txt";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     /**
@@ -51,7 +45,7 @@ public class FileHandler {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",", -1);
-                if (parts.length >= 9 && parts[1].equals(username) && BCrypt.checkpw(password, parts[2]) && parts[3].equals(role)) {
+                if (parts.length >= 9 && parts[1].equals(username) && parts[2].equals(password) && parts[3].equals(role)) {
                     return true;
                 }
             }
@@ -65,7 +59,7 @@ public class FileHandler {
     }
 
     /**
-     * Registers a new user by appending to users.txt with hashed password.
+     * Registers a new user by appending to users.txt.
      */
     public boolean registerUser(User user, ServletContext context) {
         lock.writeLock().lock();
@@ -76,9 +70,8 @@ public class FileHandler {
                 LOGGER.warning("Username already exists: " + user.getUsername());
                 return false;
             }
-            String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
             String userData = String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s%n",
-                    user.getFullName(), user.getUsername(), hashedPassword, user.getRole(),
+                    user.getFullName(), user.getUsername(), user.getPassword(), user.getRole(),
                     user.getContactNo(), user.getEmail(), user.getAddress(),
                     user.getBirthday().format(DATE_FORMATTER), user.getGender());
             Files.write(path, userData.getBytes(), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
@@ -219,58 +212,6 @@ public class FileHandler {
     }
 
     /**
-     * Adds a new feedback to feedback.txt.
-     */
-    public boolean addFeedback(Feedback feedback, ServletContext context) {
-        lock.writeLock().lock();
-        try {
-            String realPath = context.getRealPath(FEEDBACK_FILE);
-            Path path = Paths.get(realPath);
-            if (Files.exists(path) && getAllFeedback(context).stream().anyMatch(f -> f.getFeedbackId().equals(feedback.getFeedbackId()))) {
-                LOGGER.warning("Feedback ID already exists: " + feedback.getFeedbackId());
-                return false;
-            }
-            String feedbackData = String.format("%s,%s,%s,%d,%s%n",
-                    feedback.getFeedbackId(), feedback.getUsername(), feedback.getComment(),
-                    feedback.getRating(), feedback.getSubmissionDate().format(DATE_FORMATTER));
-            Files.write(path, feedbackData.getBytes(), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
-            LOGGER.info("Feedback added: " + feedback.getFeedbackId());
-            return true;
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error writing to feedback file", e);
-            return false;
-        } finally {
-            lock.writeLock().unlock();
-        }
-    }
-
-    /**
-     * Adds a new audit log to audit.txt.
-     */
-    public boolean addAuditLog(AuditLog auditLog, ServletContext context) {
-        lock.writeLock().lock();
-        try {
-            String realPath = context.getRealPath(AUDIT_FILE);
-            Path path = Paths.get(realPath);
-            if (Files.exists(path) && getAllAuditLogs(context).stream().anyMatch(a -> a.getLogId().equals(auditLog.getLogId()))) {
-                LOGGER.warning("Audit Log ID already exists: " + auditLog.getLogId());
-                return false;
-            }
-            String auditData = String.format("%s,%s,%s,%s%n",
-                    auditLog.getLogId(), auditLog.getUsername(), auditLog.getAction(),
-                    auditLog.getTimestamp().format(DATETIME_FORMATTER));
-            Files.write(path, auditData.getBytes(), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
-            LOGGER.info("Audit log added: " + auditLog.getLogId());
-            return true;
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error writing to audit file", e);
-            return false;
-        } finally {
-            lock.writeLock().unlock();
-        }
-    }
-
-    /**
      * Retrieves all products from products.txt.
      */
     public List<Product> getAllProducts(ServletContext context) {
@@ -361,66 +302,6 @@ public class FileHandler {
     }
 
     /**
-     * Retrieves all feedback from feedback.txt.
-     */
-    public List<Feedback> getAllFeedback(ServletContext context) {
-        lock.readLock().lock();
-        try (InputStream is = context.getResourceAsStream(FEEDBACK_FILE);
-             BufferedReader reader = is != null ? new BufferedReader(new InputStreamReader(is)) : null) {
-            List<Feedback> feedbackList = new ArrayList<>();
-            if (is == null) {
-                LOGGER.warning("Feedback file not found: " + FEEDBACK_FILE);
-                return feedbackList;
-            }
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",", -1);
-                if (parts.length >= 5) {
-                    feedbackList.add(new Feedback(
-                            parts[0], parts[1], parts[2],
-                            Integer.parseInt(parts[3]), LocalDate.parse(parts[4], DATE_FORMATTER)));
-                }
-            }
-            return feedbackList;
-        } catch (IOException | NumberFormatException e) {
-            LOGGER.log(Level.SEVERE, "Error reading feedback file", e);
-            return new ArrayList<>();
-        } finally {
-            lock.readLock().unlock();
-        }
-    }
-
-    /**
-     * Retrieves all audit logs from audit.txt.
-     */
-    public List<AuditLog> getAllAuditLogs(ServletContext context) {
-        lock.readLock().lock();
-        try (InputStream is = context.getResourceAsStream(AUDIT_FILE);
-             BufferedReader reader = is != null ? new BufferedReader(new InputStreamReader(is)) : null) {
-            List<AuditLog> auditLogs = new ArrayList<>();
-            if (is == null) {
-                LOGGER.warning("Audit file not found: " + AUDIT_FILE);
-                return auditLogs;
-            }
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",", -1);
-                if (parts.length >= 4) {
-                    auditLogs.add(new AuditLog(
-                            parts[0], parts[1], parts[2],
-                            LocalDateTime.parse(parts[3], DATETIME_FORMATTER)));
-                }
-            }
-            return auditLogs;
-        } catch (IOException | NumberFormatException e) {
-            LOGGER.log(Level.SEVERE, "Error reading audit file", e);
-            return new ArrayList<>();
-        } finally {
-            lock.readLock().unlock();
-        }
-    }
-
-    /**
      * Calculates total number of products.
      */
     public int getTotalProducts(ServletContext context) {
@@ -450,12 +331,5 @@ public class FileHandler {
         return (int) getAllOrders(context).stream()
                 .filter(order -> "Pending".equalsIgnoreCase(order.getStatus()))
                 .count();
-    }
-
-    /**
-     * Calculates total number of feedback entries.
-     */
-    public int getTotalFeedback(ServletContext context) {
-        return getAllFeedback(context).size();
     }
 }
