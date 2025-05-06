@@ -5,11 +5,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.AuditLog;
 import services.FileHandler;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -19,22 +20,20 @@ import java.util.logging.Logger;
 public class AdminServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(AdminServlet.class.getName());
-    private final FileHandler fileHandler;
+    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private FileHandler productFileHandler;
+    private FileHandler orderFileHandler;
+    private FileHandler userFileHandler;
+    private FileHandler feedbackFileHandler;
+    private FileHandler auditFileHandler;
 
-    /**
-     * Constructor for dependency injection.
-     *
-     * @param fileHandler The FileHandler instance
-     */
-    public AdminServlet(FileHandler fileHandler) {
-        this.fileHandler = fileHandler;
-    }
-
-    /**
-     * Default constructor for servlet container.
-     */
-    public AdminServlet() {
-        this(new FileHandler());
+    @Override
+    public void init() throws ServletException {
+        productFileHandler = new FileHandler(getServletContext().getRealPath("/data/products.txt"));
+        orderFileHandler = new FileHandler(getServletContext().getRealPath("/data/orders.txt"));
+        userFileHandler = new FileHandler(getServletContext().getRealPath("/data/users.txt"));
+        feedbackFileHandler = new FileHandler(getServletContext().getRealPath("/data/feedback.txt"));
+        auditFileHandler = new FileHandler(getServletContext().getRealPath("/data/audit.txt"));
     }
 
     @Override
@@ -54,26 +53,58 @@ public class AdminServlet extends HttpServlet {
             }
 
             // Log dashboard access
-            AuditLog auditLog = new AuditLog(
+            String auditLine = String.join(",",
                     UUID.randomUUID().toString(),
                     (String) session.getAttribute("username"),
                     "Accessed admin dashboard",
-                    LocalDateTime.now()
-            );
-            fileHandler.addAuditLog(auditLog, getServletContext());
+                    LocalDateTime.now().format(DATETIME_FORMATTER));
+            List<String> auditLines = auditFileHandler.readLines();
+            auditLines.add(auditLine);
+            auditFileHandler.writeLines(auditLines);
+
+            // Calculate dashboard metrics
+            // Total Products
+            List<String> productLines = productFileHandler.readLines();
+            long totalProducts = productLines.stream().filter(line -> !line.trim().isEmpty()).count();
+
+            // Total Orders
+            List<String> orderLines = orderFileHandler.readLines();
+            long totalOrders = orderLines.stream().filter(line -> !line.trim().isEmpty()).count();
+
+            // Active Users (Users with role 'User')
+            List<String> userLines = userFileHandler.readLines();
+            long activeUsers = userLines.stream()
+                    .filter(line -> {
+                        String[] parts = line.split(",", -1);
+                        return parts.length >= 4 && "User".equals(parts[3]);
+                    })
+                    .count();
+
+            // Pending Orders
+            long pendingOrders = orderLines.stream()
+                    .filter(line -> {
+                        String[] parts = line.split(",", -1);
+                        return parts.length >= 5 && "Pending".equals(parts[4]);
+                    })
+                    .count();
+
+            // Total Feedback
+            List<String> feedbackLines = feedbackFileHandler.readLines();
+            long totalFeedback = feedbackLines.stream().filter(line -> !line.trim().isEmpty()).count();
 
             // Set dashboard metrics
-            request.setAttribute("totalProducts", fileHandler.getTotalProducts(getServletContext()));
-            request.setAttribute("totalOrders", fileHandler.getTotalOrders(getServletContext()));
-            request.setAttribute("activeUsers", fileHandler.getActiveUsers(getServletContext()));
-            request.setAttribute("pendingOrders", fileHandler.getPendingOrders(getServletContext()));
-            request.setAttribute("totalFeedback", fileHandler.getTotalFeedback(getServletContext()));
+            request.setAttribute("totalProducts", totalProducts);
+            request.setAttribute("totalOrders", totalOrders);
+            request.setAttribute("activeUsers", activeUsers);
+            request.setAttribute("pendingOrders", pendingOrders);
+            request.setAttribute("totalFeedback", totalFeedback);
 
             request.getRequestDispatcher("/pages/adminDashboard.jsp").forward(request, response);
         } catch (Exception e) {
             LOGGER.severe("Error processing AdminServlet request: " + e.getMessage());
-            request.setAttribute("error", "Failed to load dashboard: " + e.getMessage());
-            request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
+            session.setAttribute("message", "Failed to load dashboard: " + e.getMessage());
+            session.setAttribute("messageType", "error");
+            request.getRequestDispatcher("/pages/adminDashboard.jsp").forward(request, response);
         }
     }
 
