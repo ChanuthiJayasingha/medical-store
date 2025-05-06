@@ -40,14 +40,20 @@ public class ManageFeedbackServlet extends HttpServlet {
         this(new FileHandler());
     }
 
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
+
         if (session == null || session.getAttribute("username") == null || !"Admin".equals(session.getAttribute("role"))) {
             LOGGER.warning("Unauthorized access attempt to ManageFeedbackServlet");
             response.sendRedirect(request.getContextPath() + "/pages/login.jsp");
-            feedbackList = fileHandler.getAllFeedback(getServletContext());
+            return;
+        }
+
+        try {
+            List<Feedback> feedbackList = fileHandler.getAllFeedback(getServletContext());
             request.setAttribute("feedbackList", feedbackList);
             request.getRequestDispatcher("/pages/manage-feedback.jsp").forward(request, response);
         } catch (Exception e) {
@@ -56,6 +62,7 @@ public class ManageFeedbackServlet extends HttpServlet {
             request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
         }
     }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
