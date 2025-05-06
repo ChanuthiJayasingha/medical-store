@@ -10,6 +10,8 @@ import services.FileHandler;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -20,22 +22,12 @@ import java.util.logging.Logger;
 public class ManageAuditServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(ManageAuditServlet.class.getName());
-    private final FileHandler fileHandler;
+    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private FileHandler fileHandler;
 
-    /**
-     * Constructor for dependency injection.
-     *
-     * @param fileHandler The FileHandler instance
-     */
-    public ManageAuditServlet(FileHandler fileHandler) {
-        this.fileHandler = fileHandler;
-    }
-
-    /**
-     * Default constructor for servlet container.
-     */
-    public ManageAuditServlet() {
-        this(new FileHandler());
+    @Override
+    public void init() throws ServletException {
+        fileHandler = new FileHandler(getServletContext().getRealPath("/data/audit.txt"));
     }
 
     @Override
@@ -55,21 +47,40 @@ public class ManageAuditServlet extends HttpServlet {
             }
 
             // Log audit access
-            AuditLog auditLog = new AuditLog(
+            String auditLine = String.join(",",
                     UUID.randomUUID().toString(),
                     (String) session.getAttribute("username"),
                     "Accessed audit logs",
-                    LocalDateTime.now()
-            );
-            fileHandler.addAuditLog(auditLog, getServletContext());
+                    LocalDateTime.now().format(DATETIME_FORMATTER));
+            List<String> auditLines = fileHandler.readLines();
+            auditLines.add(auditLine);
+            fileHandler.writeLines(auditLines);
 
-            List<AuditLog> auditLogs = fileHandler.getAllAuditLogs(getServletContext());
+            // Parse audit logs
+            List<AuditLog> auditLogs = new ArrayList<>();
+            for (String line : auditLines) {
+                String[] parts = line.split(",", -1);
+                if (parts.length >= 4) {
+                    try {
+                        auditLogs.add(new AuditLog(
+                                parts[0], // logId
+                                parts[1], // username
+                                parts[2], // action
+                                LocalDateTime.parse(parts[3], DATETIME_FORMATTER) // timestamp
+                        ));
+                    } catch (Exception e) {
+                        LOGGER.warning("Invalid audit log data: " + line);
+                    }
+                }
+            }
+
             request.setAttribute("auditLogs", auditLogs);
             request.getRequestDispatcher("/pages/manage-audit.jsp").forward(request, response);
         } catch (Exception e) {
             LOGGER.severe("Error processing ManageAuditServlet GET request: " + e.getMessage());
-            request.setAttribute("error", "Failed to load audit logs: " + e.getMessage());
-            request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
+            request.setAttribute("message", "Failed to load audit logs: " + e.getMessage());
+            request.setAttribute("messageType", "error");
+            request.getRequestDispatcher("/pages/manage-audit.jsp").forward(request, response);
         }
     }
 
