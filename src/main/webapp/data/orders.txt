@@ -18,5 +18,4 @@ O017,josephh,P014,2,2025-04-17,Delivered
 O018,isabellay,P016,1,2025-04-18,Pending
 O019,thomasa,P018,5,2025-04-19,Shipped
 O020,charlottek,P020,2,2025-04-20,Delivered
-O021,johndoe,P002,3,2025-04-21,Pending
-O022,janesmith,P004,2,2025-04-22,Shipped
+O021,johndoe,P002,3,Shipped,2025-05-04
