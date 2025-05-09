@@ -24,11 +24,59 @@
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>RegisterServlet</servlet-name>
-        <servlet-class>controllers.RegisterServlet</servlet-class>
+        <servlet-name>AdminServlet</servlet-name>
+        <servlet-class>controllers.AdminServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>RegisterServlet</servlet-name>
-        <url-pattern>/register</url-pattern>
+        <servlet-name>AdminServlet</servlet-name>
+        <url-pattern>/AdminServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ManageProductsServlet</servlet-name>
+        <servlet-class>controllers.ManageProductsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManageProductsServlet</servlet-name>
+        <url-pattern>/ManageProductsServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ManageOrdersServlet</servlet-name>
+        <servlet-class>controllers.ManageOrdersServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManageOrdersServlet</servlet-name>
+        <url-pattern>/ManageOrdersServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ManageUsersServlet</servlet-name>
+        <servlet-class>controllers.ManageUsersServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManageUsersServlet</servlet-name>
+        <url-pattern>/ManageUsersServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ManageFeedbackServlet</servlet-name>
+        <servlet-class>controllers.ManageFeedbackServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManageFeedbackServlet</servlet-name>
+        <url-pattern>/ManageFeedbackServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ManageAuditServlet</servlet-name>
+        <servlet-class>controllers.ManageAuditServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManageAuditServlet</servlet-name>
+        <url-pattern>/ManageAuditServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>HomeServlet</servlet-name>
+        <servlet-class>controllers.HomeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HomeServlet</servlet-name>
+        <url-pattern>/home</url-pattern>
     </servlet-mapping>
 </web-app>
