@@ -196,7 +196,7 @@
             loginButton.querySelector('#buttonText').textContent = 'Login as User';
         }
 
-        // Password visibility toggle
+        // Password visibility toggle.
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
         togglePassword.addEventListener('click', () => {
