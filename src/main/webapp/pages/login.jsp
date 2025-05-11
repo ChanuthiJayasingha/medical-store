@@ -10,85 +10,103 @@
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
+        :root {
+            --admin-primary: #4C51BF;  /* Indigo */
+            --admin-hover: #4338CA;
+            --user-primary: #047857;   /* Emerald */
+            --user-hover: #065F46;
+            --bg-gradient: linear-gradient(to bottom, #F3F4F6, #E5E7EB);
+        }
+
         body {
-            background: linear-gradient(to bottom, #e0f2fe, #bae6fd);
+            background: var(--bg-gradient);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Inter', sans-serif;
         }
-        .admin-theme, .user-theme {
-            background: linear-gradient(135deg, #3b82f6, #93c5fd);
-        }
+
         .form-container {
-            transition: all 0.5s ease;
-            border-radius: 1.25rem;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-            animation: revealForm 0.6s ease-out;
-            max-width: 450px;
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            animation: fadeIn 0.6s ease-out;
+            background: white;
         }
-        @keyframes revealForm {
-            from { opacity: 0; transform: scale(0.95) translateY(30px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+
+        .admin-theme .form-header {
+            background: linear-gradient(135deg, var(--admin-primary), #7C3AED);
         }
+
+        .user-theme .form-header {
+            background: linear-gradient(135deg, var(--user-primary), #10B981);
+        }
+
+        .admin-theme .btn-primary {
+            background: var(--admin-primary);
+        }
+
+        .admin-theme .btn-primary:hover {
+            background: var(--admin-hover);
+        }
+
+        .user-theme .btn-primary {
+            background: var(--user-primary);
+        }
+
+        .user-theme .btn-primary:hover {
+            background: var(--user-hover);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .form-input {
             transition: all 0.3s ease;
-            border: 2px solid #dbeafe;
-            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            background: #f8fafc;
             border-radius: 0.5rem;
-            padding: 0.875rem 2.75rem 0.875rem 0.875rem;
+            padding: 0.875rem 1rem;
             width: 100%;
             color: #1e293b;
         }
+
         .form-input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
-            transform: scale(1.02);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
             outline: none;
+            background: white;
         }
+
         .input-icon {
-            transition: all 0.3s ease;
+            color: #64748b;
         }
-        .form-input:focus + .input-icon {
-            color: #3b82f6;
-        }
+
         .btn-primary {
             transition: all 0.3s ease;
-            background: #2563eb;
             color: white;
             border-radius: 0.5rem;
             font-weight: 600;
             padding: 0.875rem;
             width: 100%;
-            position: relative;
-            overflow: hidden;
         }
+
         .btn-primary:hover {
-            background: #1d4ed8;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.5s ease, height 0.5s ease;
-        }
-        .btn-primary:hover::before {
-            width: 250px;
-            height: 250px;
-        }
+
         .btn-primary:disabled {
             opacity: 0.7;
             cursor: not-allowed;
+            transform: none !important;
         }
+
         .spinner {
             display: none;
             border: 3px solid rgba(255, 255, 255, 0.3);
@@ -97,108 +115,143 @@
             width: 20px;
             height: 20px;
             animation: spin 1s linear infinite;
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
         }
+
         @keyframes spin {
-            0% { transform: translateY(-50%) rotate(0deg); }
-            100% { transform: translateY(-50%) rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
+
         .error-message {
-            background: rgba(239, 68, 68, 0.95);
-            color: white;
+            background: #fee2e2;
+            color: #b91c1c;
             padding: 0.75rem;
             border-radius: 0.5rem;
             font-size: 0.875rem;
-            text-align: center;
-            animation: slideIn 0.4s ease-out;
+            margin-bottom: 1rem;
+            border-left: 4px solid #b91c1c;
         }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .link {
-            color: #bfdbfe;
-            transition: all 0.3s ease;
-        }
-        .link:hover {
-            color: #eff6ff;
-            transform: translateX(3px);
-        }
+
         .toggle-password {
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: transform 0.2s ease;
         }
+
         .toggle-password:hover {
-            transform: scale(1.2);
+            transform: scale(1.1);
+            color: var(--primary-color);
         }
-        @media (max-width: 640px) {
+
+        .form-header {
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.75rem;
+            letter-spacing: -0.025em;
+        }
+
+        .form-title {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .link {
+            color: var(--primary-color);
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .admin-theme .link {
+            color: var(--admin-primary);
+        }
+
+        .user-theme .link {
+            color: var(--user-primary);
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        .admin-theme .link:hover {
+            color: var(--admin-hover);
+        }
+
+        .user-theme .link:hover {
+            color: var(--user-hover);
+        }
+
+        @media (max-width: 480px) {
             .form-container {
-                margin: 1.5rem;
-                padding: 1.75rem;
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+
+            .form-header {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
             }
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen bg-gray-100">
-<div id="formContainer" class="form-container w-full max-w-md p-8 rounded-lg shadow-lg text-white <%= "Admin".equals(request.getParameter("role")) ? "admin-theme" : "user-theme" %>">
-    <div class="text-center mb-6">
-        <a href="${pageContext.request.contextPath}/pages/index.jsp" class="text-4xl font-extrabold tracking-tight">MediCare</a>
+<body>
+<div id="formContainer" class="form-container <%= "Admin".equals(request.getParameter("role")) ? "admin-theme" : "user-theme" %>">
+    <div class="form-header">
+        <div class="logo">MediCare</div>
+        <div class="form-title"><%= "Admin".equals(request.getParameter("role")) ? "Admin Login" : "User Login" %></div>
     </div>
-    <h2 id="formTitle" class="text-2xl font-bold mb-6 text-center"><%= "Admin".equals(request.getParameter("role")) ? "Admin Login" : "User Login" %></h2>
-    <%-- Display error message if present --%>
+
     <% if (request.getAttribute("errorMessage") != null) { %>
-    <div class="error-message mb-4"><%= request.getAttribute("errorMessage") %></div>
+    <div class="error-message" role="alert">
+        <i class="fas fa-exclamation-circle mr-2"></i><%= request.getAttribute("errorMessage") %>
+    </div>
     <% } %>
-    <form id="loginForm" action="${pageContext.request.contextPath}/login" method="POST" aria-label="<%= "Admin".equals(request.getParameter("role")) ? "Admin Login Form" : "User Login Form" %>">
+
+    <form id="loginForm" action="${pageContext.request.contextPath}/login" method="POST">
         <input type="hidden" name="role" value="<%= "Admin".equals(request.getParameter("role")) ? "Admin" : "User" %>">
+
         <div class="mb-4">
-            <label for="username" class="block mb-2 text-sm font-medium">Username</label>
+            <label for="username" class="block mb-2 text-sm font-medium text-gray-700">Username</label>
             <div class="relative">
-                <input type="text" id="username" name="username" class="form-input" placeholder="Enter your username" required aria-required="true">
-                <i class="fas fa-user input-icon absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"></i>
+                <input type="text" id="username" name="username" class="form-input pl-10" placeholder="Enter your username" required>
+                <i class="fas fa-user input-icon absolute left-3 top-1/2 transform -translate-y-1/2"></i>
             </div>
         </div>
+
         <div class="mb-6">
-            <label for="password" class="block mb-2 text-sm font-medium">Password</label>
+            <label for="password" class="block mb-2 text-sm font-medium text-gray-700">Password</label>
             <div class="relative">
-                <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" required aria-required="true">
-                <i class="fas fa-eye input-icon toggle-password absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600" id="togglePassword" aria-label="Toggle password visibility"></i>
+                <input type="password" id="password" name="password" class="form-input pl-10" placeholder="Enter your password" required>
+                <i class="fas fa-lock input-icon absolute left-3 top-1/2 transform -translate-y-1/2"></i>
+                <i class="fas fa-eye toggle-password absolute right-3 top-1/2 transform -translate-y-1/2" id="togglePassword"></i>
             </div>
         </div>
-        <button type="submit" id="loginButton" class="btn-primary relative">
-            <span id="buttonText"><%= "Admin".equals(request.getParameter("role")) ? "Login as Admin" : "Login as User" %></span>
+
+        <button type="submit" id="loginButton" class="btn-primary flex items-center justify-center gap-2">
+            <span id="buttonText">Sign In</span>
             <span id="spinner" class="spinner"></span>
         </button>
+
+        <div class="mt-4 text-center text-sm text-gray-600">
+            <p>Don't have an account? <a href="${pageContext.request.contextPath}/pages/register.jsp" class="link">Register</a></p>
+            <p class="mt-1">Forgot password? <a href="#" class="link">Reset</a></p>
+        </div>
     </form>
-    <div class="mt-4 text-center text-sm">
-        <p>Don't have an account? <a href="${pageContext.request.contextPath}/pages/register.jsp" class="link underline">Sign Up</a></p>
-        <p><a href="${pageContext.request.contextPath}/pages/index.jsp" class="link underline">Back to Home</a></p>
-    </div>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const role = '<%= "Admin".equals(request.getParameter("role")) ? "Admin" : "User" %>';
-        const formContainer = document.getElementById('formContainer');
-        const formTitle = document.getElementById('formTitle');
-        const loginButton = document.getElementById('loginButton');
-
-        if (role === 'Admin') {
-            formContainer.classList.add('admin-theme');
-            formTitle.textContent = 'Admin Login';
-            loginButton.querySelector('#buttonText').textContent = 'Login as Admin';
-        } else {
-            formContainer.classList.add('user-theme');
-            formTitle.textContent = 'User Login';
-            loginButton.querySelector('#buttonText').textContent = 'Login as User';
-        }
-
-        // Password visibility toggle.
+        // Password visibility toggle
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
+
         togglePassword.addEventListener('click', () => {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
@@ -206,13 +259,20 @@
             togglePassword.classList.toggle('fa-eye-slash');
         });
 
-        // Loading spinner on form submit
+        // Form submission handler
         const form = document.getElementById('loginForm');
+        const loginButton = document.getElementById('loginButton');
+        const buttonText = document.getElementById('buttonText');
+        const spinner = document.getElementById('spinner');
+
         form.addEventListener('submit', () => {
             loginButton.disabled = true;
-            loginButton.querySelector('#buttonText').style.opacity = '0';
-            loginButton.querySelector('#spinner').style.display = 'inline-block';
+            buttonText.textContent = 'Signing in...';
+            spinner.style.display = 'inline-block';
         });
+
+        // Focus first input field
+        document.getElementById('username').focus();
     });
 </script>
 </body>
