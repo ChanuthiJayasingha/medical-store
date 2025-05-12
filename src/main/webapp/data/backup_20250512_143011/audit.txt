@@ -24,14 +24,3 @@ AUD017: Cleared audit logs performed by admin at 20250512_141701
 AUD018: Accessed audit logs performed by admin at 20250512_141701
 AUD019: Accessed audit logs performed by admin at 20250512_141807
 AUD020: Accessed audit logs performed by admin at 20250512_142956
-Backup created at 20250512_143011 by admin
-AUD021: Backup created performed by admin at 20250512_143011
-AUD022: Accessed audit logs performed by admin at 20250512_143011
-70e0093a-ee87-4405-8137-10e4d74c9fe1,admin,Accessed admin dashboard,2025-05-12 14:30:52
-AUD023: Accessed audit logs performed by admin at 20250512_143053
-d3713eaa-1add-47c7-870e-ce495c6eed99,admin,Accessed admin dashboard,2025-05-12 14:30:54
-de5f7808-4942-4e69-9119-195384b35c04,admin,Accessed admin dashboard,2025-05-12 14:30:59
-AUD024: Accessed audit logs performed by admin at 20250512_143440
-AUD025: Accessed audit logs performed by admin at 20250512_144441
-AUD026: Accessed audit logs performed by admin at 20250512_144601
-AUD027: Accessed audit logs performed by admin at 20250512_145256
