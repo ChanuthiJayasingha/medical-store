@@ -8,9 +8,9 @@ import java.time.format.DateTimeFormatter;
 
 public class BackupService {
     private final String basePath;
-    private final AuditService auditService;
+    private final services.AuditService auditService;
 
-    public BackupService(String basePath, AuditService auditService) {
+    public BackupService(String basePath, services.AuditService auditService) {
         this.basePath = basePath;
         this.auditService = auditService;
     }
@@ -21,9 +21,11 @@ public class BackupService {
         if (!backupDir.exists()) {
             backupDir.mkdir();
         }
-        copyFile("appointments.txt", backupDir);
-        copyFile("doctors.txt", backupDir);
-        copyFile("patients.txt", backupDir);
+        copyFile("feedback.txt", backupDir);
+        copyFile("orders.txt", backupDir);
+        copyFile("products.txt", backupDir);
+        copyFile("users.txt", backupDir);
+        copyFile("audit.txt", backupDir);
         auditService.addAuditLog("Backup created at " + timestamp + " by " + username);
     }
 

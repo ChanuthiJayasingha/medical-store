@@ -6,6 +6,8 @@ AUD005,admin,Added user: user123,2025-05-05 12:04:00
 AUD006,admin,Accessed audit logs,2025-05-05 17:37:55
 AUD001: Accessed audit logs performed by admin at 20250505_175254
 AUD002: Accessed audit logs performed by admin at 20250508_100159
+f1ff8714-6574-4b2a-8015-1c2829ed1127,admin,Accessed admin dashboard,2025-05-08 10:02:07
+df4c6029-f411-4fa1-9cbe-e046682e7854,admin,Accessed admin dashboard,2025-05-12 14:05:01
 AUD003: Accessed audit logs performed by admin at 20250512_140537
 AUD004: Accessed audit logs performed by admin at 20250512_140844
 AUD005: Accessed audit logs performed by admin at 20250512_140854
@@ -18,8 +20,3 @@ AUD011: Accessed audit logs performed by admin at 20250512_141415
 AUD012: Accessed audit logs performed by admin at 20250512_141606
 AUD013: Accessed audit logs performed by admin at 20250512_141609
 AUD014: Accessed audit logs performed by admin at 20250512_141640
-AUD015: Backup created performed by admin at 20250512_141641
-AUD016: Accessed audit logs performed by admin at 20250512_141641
-AUD017: Cleared audit logs performed by admin at 20250512_141701
-AUD018: Accessed audit logs performed by admin at 20250512_141701
-AUD019: Accessed audit logs performed by admin at 20250512_141807
