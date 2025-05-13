@@ -304,8 +304,15 @@
                                                 <span class="text-gray-600 text-sm ml-2">(4.0)</span>
                                             </div>
                                             <div class="flex space-x-2">
+<%--                                                <button type="submit"--%>
+<%--                                                        class="w-full bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"--%>
+<%--                                                    ${product.stockQuantity == 0 ? 'disabled' : ''}>--%>
+<%--                                                    <i class="fas fa-cart-plus mr-2"></i>Add to Cart--%>
+<%--                                                </button>--%>
                                                 <form action="${pageContext.request.contextPath}/cart" method="post" class="flex-1">
                                                     <input type="hidden" name="productId" value="${product.productId}">
+                                                    <input type="hidden" name="productName" value="${product.name}">
+                                                    <input type="hidden" name="productPrice" value="${product.price}">
                                                     <input type="hidden" name="action" value="add">
                                                     <button type="submit"
                                                             class="w-full bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
@@ -313,9 +320,7 @@
                                                         <i class="fas fa-cart-plus mr-2"></i>Add to Cart
                                                     </button>
                                                 </form>
-                                                <button class="quick-view bg-gray-200 text-gray-700 py-2 px-4 rounded-full hover:bg-blue-600 hover:text-white transition">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
+
                                             </div>
                                         </div>
                                     </c:if>

@@ -1,3 +1,5 @@
+<%@ page import="java.util.List" %>
+<%@ page import="model.Product" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -154,49 +156,75 @@
     </c:if>
     <div class="flex flex-col lg:flex-row gap-8">
       <div class="lg:w-2/3">
-        <c:choose>
-          <c:when test="${not empty cartItems && cartItems.size() > 0}">
-            <c:forEach var="item" items="${cartItems}">
-              <div class="cart-item card-hover fade-in mb-6 flex flex-col sm:flex-row items-center" itemscope itemtype="https://schema.org/Product">
-                <img src="${item.product.imageUrl}" alt="${item.product.name}" class="w-32 h-32 object-contain rounded-lg mb-4 sm:mb-0 sm:mr-6" loading="lazy" itemprop="image">
-                <div class="flex-1">
-                  <h3 class="text-lg font-semibold text-gray-800 mb-2" itemprop="name">${item.product.name}</h3>
-                  <p class="text-sm text-gray-600 mb-3 line-clamp-2" itemprop="description">${item.product.description}</p>
-                  <div class="flex justify-between items-center">
-                                        <span class="text-xl font-bold text-blue-600" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-                                            <span itemprop="priceCurrency" content="USD">$</span>
-                                            <span itemprop="price" content="${item.product.price}">${item.product.price}</span>
-                                        </span>
-                    <div class="flex items-center space-x-4">
-                      <form action="${pageContext.request.contextPath}/cart" method="post" class="flex items-center">
-                        <input type="hidden" name="action" value="update">
-                        <input type="hidden" name="productId" value="${item.product.productId}">
-                        <input type="number" name="quantity" value="${item.quantity}" min="1" max="${item.product.stockQuantity}" class="quantity-input"
-                               onchange="this.form.submit()" aria-label="Quantity">
-                      </form>
-                      <form action="${pageContext.request.contextPath}/cart" method="post">
-                        <input type="hidden" name="action" value="remove">
-                        <input type="hidden" name="productId" value="${item.product.productId}">
-                        <button type="submit" class="text-red-600 hover:text-red-800" aria-label="Remove item">
-                          <i class="fas fa-trash-alt"></i>
-                        </button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </c:forEach>
-          </c:when>
-          <c:otherwise>
-            <div class="empty-cart">
-              <i class="fas fa-shopping-cart text-4xl text-gray-600 mb-4"></i>
-              <p>Your cart is empty. Start shopping now!</p>
-              <a href="${pageContext.request.contextPath}/home" class="mt-4 inline-block bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition">
-                Shop Now
-              </a>
-            </div>
-          </c:otherwise>
-        </c:choose>
+
+        <%
+          List<Product> cart = (List<Product>) session.getAttribute("cart");
+          if (cart != null && !cart.isEmpty()) {
+            for (Product product : cart) {
+        %>
+        <div>
+          <h1><%= product.getName() %></h1>
+          <h1><%=product.getPrice()  %></h1>
+          <h1><%=product.getProductId()  %></h1>
+          <form action="<%= request.getContextPath() %>/cart" method="post">
+            <input type="hidden" name="productId" value="<%= product.getProductId() %>">
+            <input type="hidden" name="action" value="delete">
+            <button>DELETE</button>
+          </form>
+        </div>
+
+        <%
+          }
+        } else {
+        %>
+        <p>Your cart is empty.</p>
+        <%
+          }
+        %>
+
+      <%--        <c:choose>--%>
+<%--          <c:when test="${not empty cartItems && cartItems.size() > 0}">--%>
+<%--            <c:forEach var="item" items="${cartItems}">--%>
+<%--              <div class="cart-item card-hover fade-in mb-6 flex flex-col sm:flex-row items-center" itemscope itemtype="https://schema.org/Product">--%>
+<%--                <img src="${item.product.imageUrl}" alt="${item.product.name}" class="w-32 h-32 object-contain rounded-lg mb-4 sm:mb-0 sm:mr-6" loading="lazy" itemprop="image">--%>
+<%--                <div class="flex-1">--%>
+<%--                  <h3 class="text-lg font-semibold text-gray-800 mb-2" itemprop="name">${item.product.name}</h3>--%>
+<%--                  <p class="text-sm text-gray-600 mb-3 line-clamp-2" itemprop="description">${item.product.description}</p>--%>
+<%--                  <div class="flex justify-between items-center">--%>
+<%--                                        <span class="text-xl font-bold text-blue-600" itemprop="offers" itemscope itemtype="https://schema.org/Offer">--%>
+<%--                                            <span itemprop="priceCurrency" content="USD">$</span>--%>
+<%--                                            <span itemprop="price" content="${item.product.price}">${item.product.price}</span>--%>
+<%--                                        </span>--%>
+<%--                    <div class="flex items-center space-x-4">--%>
+<%--                      <form action="${pageContext.request.contextPath}/cart" method="post" class="flex items-center">--%>
+<%--                        <input type="hidden" name="action" value="update">--%>
+<%--                        <input type="hidden" name="productId" value="${item.product.productId}">--%>
+<%--                        <input type="number" name="quantity" value="${item.quantity}" min="1" max="${item.product.stockQuantity}" class="quantity-input"--%>
+<%--                               onchange="this.form.submit()" aria-label="Quantity">--%>
+<%--                      </form>--%>
+<%--                      <form action="${pageContext.request.contextPath}/cart" method="post">--%>
+<%--                        <input type="hidden" name="action" value="remove">--%>
+<%--                        <input type="hidden" name="productId" value="${item.product.productId}">--%>
+<%--                        <button type="submit" class="text-red-600 hover:text-red-800" aria-label="Remove item">--%>
+<%--                          <i class="fas fa-trash-alt"></i>--%>
+<%--                        </button>--%>
+<%--                      </form>--%>
+<%--                    </div>--%>
+<%--                  </div>--%>
+<%--                </div>--%>
+<%--              </div>--%>
+<%--            </c:forEach>--%>
+<%--          </c:when>--%>
+<%--          <c:otherwise>--%>
+<%--            <div class="empty-cart">--%>
+<%--              <i class="fas fa-shopping-cart text-4xl text-gray-600 mb-4"></i>--%>
+<%--              <p>Your cart is empty. Start shopping now!</p>--%>
+<%--              <a href="${pageContext.request.contextPath}/home" class="mt-4 inline-block bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition">--%>
+<%--                Shop Now--%>
+<%--              </a>--%>
+<%--            </div>--%>
+<%--          </c:otherwise>--%>
+<%--        </c:choose>--%>
       </div>
       <c:if test="${not empty cartItems && cartItems.size() > 0}">
         <div class="lg:w-1/3">
