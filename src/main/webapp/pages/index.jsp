@@ -8,13 +8,9 @@
     <meta name="description" content="MediCare: Shop medicines, wellness products, medical devices, and personal care from your trusted online pharmacy.">
     <meta name="keywords" content="MediCare, online pharmacy, medicines, wellness, medical devices, personal care, health products">
     <title>MediCare - Your Trusted Online Pharmacy</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
     <style>
         body { font-family: 'Inter', Arial, sans-serif; background-color: #f7fafc; margin: 0; }
         .container { max-width: 1280px; margin: 0 auto; padding: 16px; }
@@ -53,7 +49,6 @@
             .mobile-menu.active { display: block; }
         }
     </style>
-    <!-- Schema.org for SEO -->
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -83,7 +78,7 @@
             </div>
             <a href="${pageContext.request.contextPath}/cart" class="relative">
                 <i class="fas fa-shopping-cart text-gray-600 text-xl"></i>
-                <span class="cart-count">0</span>
+                <span class="cart-count">${cartItems != null ? cartItems.size() : 0}</span>
             </a>
             <c:choose>
                 <c:when test="${not empty sessionScope.username}">
@@ -116,12 +111,10 @@
                 </c:otherwise>
             </c:choose>
         </div>
-        <!-- Mobile Menu Toggle -->
         <button id="mobileMenuToggle" class="md:hidden text-gray-600 focus:outline-none">
             <i class="fas fa-bars text-2xl"></i>
         </button>
     </div>
-    <!-- Mobile Menu -->
     <div id="mobileMenu" class="mobile-menu md:hidden bg-white shadow-lg px-4 py-4">
         <div class="relative mb-4">
             <input type="text" id="mobileSearchInput" placeholder="Search medicines..."
@@ -159,12 +152,12 @@
             </c:otherwise>
         </c:choose>
         <a href="${pageContext.request.contextPath}/cart" class="flex items-center mt-4 text-gray-600 hover:text-blue-600">
-            <i class="fas fa-shopping-cart mr-2"></i> Cart <span class="cart-count ml-2">0</span>
+            <i class="fas fa-shopping-cart mr-2"></i> Cart <span class="cart-count ml-2">${cartItems != null ? cartItems.size() : 0}</span>
         </a>
     </div>
 </nav>
 
-<!-- Hero Section with Carousel -->
+<!-- Hero Section -->
 <section class="hero-bg text-white py-24">
     <div class="container">
         <div class="carousel">
@@ -254,18 +247,15 @@
                 </button>
             </div>
         </div>
-        <!-- Error Message -->
         <c:if test="${not empty error}">
             <div class="error-message flex items-center">
                 <i class="fas fa-exclamation-circle mr-2"></i>${error}
             </div>
         </c:if>
-        <!-- Loading Spinner -->
         <div id="loadingSpinner" class="loading-spinner hidden">
             <i class="fas fa-spinner fa-spin text-blue-600 text-3xl"></i>
             <p class="text-gray-600 mt-2">Loading products...</p>
         </div>
-        <!-- Categorized Products -->
         <div id="productsContainer">
             <c:choose>
                 <c:when test="${not empty products && products.size() > 0}">
@@ -283,8 +273,8 @@
                                              data-name="${product.name.toLowerCase()}"
                                              data-description="${product.description.toLowerCase()}"
                                              data-category="${product.category}"
+                                             data-product-id="${product.productId}"
                                              itemscope itemtype="https://schema.org/Product">
-                                            <!-- Badges -->
                                             <c:if test="${product.stockQuantity <= 10 && product.stockQuantity > 0}">
                                                 <span class="badge badge-low-stock">Low Stock</span>
                                             </c:if>
@@ -316,6 +306,7 @@
                                             <div class="flex space-x-2">
                                                 <form action="${pageContext.request.contextPath}/cart" method="post" class="flex-1">
                                                     <input type="hidden" name="productId" value="${product.productId}">
+                                                    <input type="hidden" name="action" value="add">
                                                     <button type="submit"
                                                             class="w-full bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
                                                         ${product.stockQuantity == 0 ? 'disabled' : ''}>
@@ -381,10 +372,9 @@
     </div>
 </footer>
 
-<!-- JavaScript for Interactivity -->
+<!-- JavaScript -->
 <script>
     try {
-        // Debounce Function
         function debounce(func, wait) {
             let timeout;
             return function executedFunction(...args) {
@@ -397,7 +387,6 @@
             };
         }
 
-        // Show Loading Spinner
         const loadingSpinner = document.getElementById('loadingSpinner');
         const productsContainer = document.getElementById('productsContainer');
         loadingSpinner.classList.remove('hidden');
@@ -405,7 +394,6 @@
             loadingSpinner.classList.add('hidden');
         }, 1000);
 
-        // Search Functionality
         const searchInputs = [document.getElementById('searchInput'), document.getElementById('mobileSearchInput')];
         const productCards = document.querySelectorAll('.product-card');
         const categorySections = document.querySelectorAll('.category-section');
@@ -439,7 +427,6 @@
             }
         });
 
-        // Category Filter
         const categoryFilters = document.querySelectorAll('.category-filter');
         categoryFilters.forEach(button => {
             button.addEventListener('click', () => {
@@ -465,7 +452,6 @@
             });
         });
 
-        // Toggle Category Sections
         const categoryHeaders = document.querySelectorAll('.category-header');
         categoryHeaders.forEach(header => {
             header.addEventListener('click', () => {
@@ -478,7 +464,6 @@
             });
         });
 
-        // Mobile Menu Toggle
         const mobileMenuToggle = document.getElementById('mobileMenuToggle');
         const mobileMenu = document.getElementById('mobileMenu');
         if (mobileMenuToggle && mobileMenu) {
@@ -487,7 +472,6 @@
             });
         }
 
-        // Carousel Functionality
         const carouselInner = document.querySelector('.carousel-inner');
         const carouselItems = document.querySelectorAll('.carousel-item');
         const prevControl = document.querySelector('.carousel-control.prev');
@@ -509,27 +493,12 @@
                 updateCarousel();
             });
 
-            // Auto-slide every 5 seconds
             setInterval(() => {
                 currentIndex = (currentIndex === carouselItems.length - 1) ? 0 : currentIndex + 1;
                 updateCarousel();
             }, 5000);
         }
 
-        // Add to Cart
-        document.querySelectorAll('.product-card form button').forEach(button => {
-            button.addEventListener('click', (e) => {
-                if (!button.disabled) {
-                    const cartCount = document.querySelectorAll('.cart-count');
-                    cartCount.forEach(count => {
-                        count.textContent = parseInt(count.textContent) + 1;
-                    });
-                    alert('Item added to cart!');
-                }
-            });
-        });
-
-        // Quick View (Placeholder)
         document.querySelectorAll('.quick-view').forEach(button => {
             button.addEventListener('click', () => {
                 alert('Quick view feature coming soon!');
