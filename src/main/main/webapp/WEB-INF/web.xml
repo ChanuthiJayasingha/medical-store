@@ -24,6 +24,14 @@
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>controllers.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>AdminServlet</servlet-name>
         <servlet-class>controllers.AdminServlet</servlet-class>
     </servlet>
@@ -70,13 +78,5 @@
     <servlet-mapping>
         <servlet-name>ManageAuditServlet</servlet-name>
         <url-pattern>/ManageAuditServlet</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>HomeServlet</servlet-name>
-        <servlet-class>controllers.HomeServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>HomeServlet</servlet-name>
-        <url-pattern>/home</url-pattern>
     </servlet-mapping>
 </web-app>
