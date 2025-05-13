@@ -65,7 +65,7 @@
     width: 100%;
     max-width: 28rem; /* 448px */
     padding: var(--space-xxl);
-    background-color: var(--color-dark-blue);
+    background-color: black;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     animation: fadeIn 0.6s var(--transition-slow);
