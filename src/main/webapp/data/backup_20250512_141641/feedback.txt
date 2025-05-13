@@ -1,0 +1,20 @@
+FDB001,patient1,Great service and fast delivery!,5,2025-05-05
+FDB002,admin,Needs improvement in customer support response time.,3,2025-05-04
+FDB003,user123,Very satisfied with the product quality.,4,2025-04-28
+FDB004,patient2,The website is user-friendly and easy to navigate.,5,2025-04-15
+FDB005,john_doe,Delivery was delayed by two days.,2,2025-04-10
+FDB006,emma_smith,Excellent support from the team!,5,2025-03-25
+FDB007,user456,Product descriptions could be more detailed.,3,2025-03-15
+FDB008,patient3,Very happy with the quick response to my query.,4,2025-03-01
+FDB009,mike_brown,The ordering process was smooth and efficient.,5,2025-02-20
+FDB010,sarah_connor,Some items were out of stock.,2,2025-02-10
+FDB011,user789,Highly recommend MediCare for medical supplies!,5,2025-01-30
+FDB012,patient4,Packaging could be more eco-friendly.,3,2025-01-15
+FDB013,jane_doe,Fast shipping and good communication.,4,2025-01-05
+FDB014,patient5,The product worked as expected.,4,2024-12-25
+FDB015,alex_wilson,Customer service was not very helpful.,2,2024-12-15
+FDB016,user101,Very pleased with the overall experience.,5,2024-12-01
+FDB017,patient6,Website could use a better search function.,3,2024-11-20
+FDB018,lisa_martin,Quick delivery and high-quality products.,5,2024-11-10
+FDB019,user222,Support team resolved my issue promptly.,4,2024-10-30
+FDB020,patient7,Some products are overpriced.,3,2024-10-15
