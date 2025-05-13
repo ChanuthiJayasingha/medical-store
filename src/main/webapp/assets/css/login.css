@@ -1,0 +1,237 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-theme body {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1512678080530-7760d81faba6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.user-theme body {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.indiamart.com%2Fproddetail%2Fmedical-store-interior-designer-2853445513662.html&psig=AOvVaw0LwHsKjSIKH-tGolbeRbQj&ust=1747125110348000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCICclbDCnY0DFQAAAAAdAAAAABAE') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #f3f4f6;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.form-container:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.35);
+}
+
+.admin-theme .form-container {
+    background: linear-gradient(to bottom, #1e3c72, #a3bffa);
+}
+
+.user-theme .form-container {
+    background: linear-gradient(to bottom, #065f46, #a7f3d0);
+}
+
+.logo {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    margin-bottom: 28px;
+    letter-spacing: 1px;
+}
+
+h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 28px;
+    letter-spacing: 0.5px;
+}
+
+.error-message {
+    background: linear-gradient(to right, #b91c1c, #ef4444);
+    color: #ffffff;
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    animation: slideIn 0.5s ease;
+    font-size: 0.875rem;
+}
+
+.form-group {
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #f3f4f6;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px 48px 14px 16px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #1f2937;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.4);
+    transform: scale(1.03);
+}
+
+.form-group i {
+    position: absolute;
+    right: 16px;
+    top: 58%;
+    transform: translateY(-50%);
+    color: #4b5563;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.form-group i:hover {
+    color: #1f2937;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+}
+
+.admin-theme .submit-btn {
+    color: #1e3c72;
+}
+
+.user-theme .submit-btn {
+    color: #065f46;
+}
+
+.submit-btn:hover {
+    background: #e5e7eb;
+    transform: translateY(-3px);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.submit-btn.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+    position: relative;
+}
+
+.submit-btn.loading::after {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #4b5563;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.links {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.links p {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.links a {
+    color: #f3f4f6;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.links a:hover {
+    color: #ffffff;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 640px) {
+    .form-container {
+        padding: 28px;
+        max-width: 95%;
+    }
+
+    .logo {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .form-group input {
+        padding: 12px 44px 12px 14px;
+    }
+
+    .submit-btn {
+        padding: 12px;
+        font-size: 1rem;
+    }
+}
