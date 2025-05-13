@@ -142,29 +142,17 @@ public class User {
         if (username == null || username.trim().isEmpty()) {
             throw new IllegalArgumentException("Username cannot be null or empty");
         }
-        if (!username.matches("^[a-zA-Z0-9_]+$")) {
-            throw new IllegalArgumentException("Username can only contain letters, numbers, and underscores");
-        }
     }
 
     private void validatePassword(String password) {
         if (password == null || password.trim().isEmpty()) {
             throw new IllegalArgumentException("Password cannot be null or empty");
         }
-        if (password.length() < 6) {
-            throw new IllegalArgumentException("Password must be at least 6 characters long");
-        }
-        if (!password.matches("^[a-zA-Z0-9!@#$%^&*()_+=]+$")) {
-            throw new IllegalArgumentException("Password can only contain letters, numbers, and common special characters");
-        }
     }
 
     private void validateRole(String role) {
         if (role == null || role.trim().isEmpty()) {
             throw new IllegalArgumentException("Role cannot be null or empty");
-        }
-        if (!role.equals("Admin") && !role.equals("Customer")) {
-            throw new IllegalArgumentException("Role must be either 'Admin' or 'Customer'");
         }
     }
 
