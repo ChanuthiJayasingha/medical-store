@@ -1,5 +1,4 @@
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.ArrayList" %>
 <%@ page import="model.Product" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -19,71 +18,67 @@
     .container { max-width: 1280px; margin: 0 auto; padding: 16px; }
     .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
     .card-hover:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15); }
-    .cart-item { background: white; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 16px; display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .cart-item { background: white; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 16px; }
     .error-message { background: #fef2f2; color: #dc2626; padding: 16px; border-radius: 8px; margin-bottom: 24px; }
     .empty-cart { text-align: center; color: #4b5563; margin: 32px 0; font-size: 18px; }
     .quantity-input { width: 80px; text-align: center; border: 1px solid #d1d5db; border-radius: 8px; padding: 4px; }
     .subtotal-card { background: white; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 24px; }
     .fade-in { animation: fadeIn 0.5s ease-in; }
-    .cart-item-image { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
-    .cart-item-details { flex: 1; }
-    .cart-item-actions { display: flex; align-items: center; gap: 8px; }
-    .quantity-control { display: flex; align-items: center; gap: 8px; }
-    .quantity-btn { background: #e5e7eb; color: #1f2937; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
-    .quantity-btn:hover { background: #d1d5db; }
-    .remove-btn { background: #dc2626; color: white; padding: 8px 16px; border-radius: 8px; font-size: 14px; }
-    .remove-btn:hover { background: #b91c1c; }
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
-    .modal-content { background: white; margin: 10% auto; padding: 24px; border-radius: 12px; max-width: 500px; width: 90%; }
-    .modal-close { position: absolute; top: 16px; right: 16px; cursor: pointer; }
+    .debug-info { background: #e5e7eb; color: #1f2937; padding: 16px; border-radius: 8px; margin-bottom: 24px; font-size: 14px; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @media (max-width: 640px) {
-      .cart-item { flex-direction: column; align-items: flex-start; }
-      .cart-item-image { width: 100%; height: auto; }
+      .cart-item { flex-direction: column; }
+      .cart-item img { width: 100%; height: auto; }
       .subtotal-card { position: static; width: 100%; }
-      .cart-item-actions { width: 100%; justify-content: space-between; }
     }
   </style>
+  <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "MediCare Shopping Cart",
+        "description": "View and manage your shopping cart at MediCare online pharmacy.",
+        "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {"@type": "ListItem", "position": 1, "name": "Home", "item": "${pageContext.request.contextPath}/home"},
+                    {"@type": "ListItem", "position": 2, "name": "Cart", "item": "${pageContext.request.contextPath}/cart"}
+                ]
+            }
+        }
+  </script>
 </head>
 <body class="bg-gray-50">
-<!-- Navigation (unchanged) -->
 <nav class="bg-white shadow-lg sticky top-0 z-50">
   <div class="container flex justify-between items-center py-4">
     <a href="${pageContext.request.contextPath}/home" class="text-3xl font-bold text-blue-600">MediCare</a>
     <div class="hidden md:flex items-center space-x-6">
       <div class="relative">
-        <input type="text" id="searchInput" placeholder="Search medicines..." class="w-80 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Search products">
+        <input type="text" id="searchInput" placeholder="Search medicines..."
+               class="w-80 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+               aria-label="Search products">
         <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
       </div>
       <a href="${pageContext.request.contextPath}/cart" class="relative">
         <i class="fas fa-shopping-cart text-gray-600 text-xl"></i>
-        <%
-          List<Product> cart = null;
-          int cartSize = 0;
-          try {
-            Object cartObj = session.getAttribute("cart");
-            if (cartObj instanceof List) {
-              cart = (List<Product>) cartObj;
-              cartSize = (cart != null) ? cart.size() : 0;
-            }
-          } catch (ClassCastException e) {
-            cart = new ArrayList<>();
-            session.setAttribute("cart", cart);
-          }
-        %>
-        <span class="cart-count top-[-8px] right-[-8px] bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs"><%= cartSize %></span>
+        <span class="cart-count top-[-8px] right-[-8px] bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs">${cartItems != null ? cartItems.size() : 0}</span>
       </a>
       <c:choose>
         <c:when test="${not empty sessionScope.username}">
           <div class="flex items-center space-x-4">
-            <span class="text-gray-600 font-medium">Welcome, ${sessionScope.username} (${sessionScope.role})</span>
+                        <span class="text-gray-600 font-medium">
+                            Welcome, ${sessionScope.username} (${sessionScope.role})
+                        </span>
             <c:if test="${sessionScope.role == 'User'}">
-              <a href="${pageContext.request.contextPath}/pages/profile.jsp" class="text-gray-600 hover:text-blue-600 font-medium">Profile</a>
+              <a href="${pageContext.request.contextPath}/pages/profile.jsp"
+                 class="text-gray-600 hover:text-blue-600 font-medium">Profile</a>
             </c:if>
             <c:if test="${sessionScope.role == 'Admin'}">
-              <a href="${pageContext.request.contextPath}/ManageProductsServlet" class="text-gray-600 hover:text-blue-600 font-medium">Manage Products</a>
+              <a href="${pageContext.request.contextPath}/ManageProductsServlet"
+                 class="text-gray-600 hover:text-blue-600 font-medium">Manage Products</a>
             </c:if>
-            <a href="${pageContext.request.contextPath}/logout" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">Logout</a>
+            <a href="${pageContext.request.contextPath}/logout"
+               class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">Logout</a>
           </div>
         </c:when>
         <c:otherwise>
@@ -94,7 +89,8 @@
               <a href="${pageContext.request.contextPath}/pages/login.jsp?role=User" class="block px-6 py-3 text-gray-700 font-medium hover:bg-gray-100 hover:text-blue-600">User Login</a>
             </div>
           </div>
-          <a href="${pageContext.request.contextPath}/pages/register.jsp" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">Sign Up</a>
+          <a href="${pageContext.request.contextPath}/pages/register.jsp"
+             class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">Sign Up</a>
         </c:otherwise>
       </c:choose>
     </div>
@@ -104,42 +100,55 @@
   </div>
   <div id="mobileMenu" class="mobile-menu md:hidden bg-white shadow-lg px-4 py-4 hidden">
     <div class="relative mb-4">
-      <input type="text" id="mobileSearchInput" placeholder="Search medicines..." class="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Search products">
+      <input type="text" id="mobileSearchInput" placeholder="Search medicines..."
+             class="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+             aria-label="Search products">
       <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
     </div>
     <c:choose>
       <c:when test="${not empty sessionScope.username}">
         <div class="flex flex-col space-y-2">
-          <span class="text-gray-600 font-medium">Welcome, ${sessionScope.username} (${sessionScope.role})</span>
+                    <span class="text-gray-600 font-medium">
+                        Welcome, ${sessionScope.username} (${sessionScope.role})
+                    </span>
           <c:if test="${sessionScope.role == 'User'}">
-            <a href="${pageContext.request.contextPath}/pages/profile.jsp" class="text-gray-600 hover:text-blue-600">Profile</a>
+            <a href="${pageContext.request.contextPath}/pages/profile.jsp"
+               class="text-gray-600 hover:text-blue-600">Profile</a>
           </c:if>
           <c:if test="${sessionScope.role == 'Admin'}">
-            <a href="${pageContext.request.contextPath}/ManageProductsServlet" class="text-gray-600 hover:text-blue-600">Manage Products</a>
+            <a href="${pageContext.request.contextPath}/ManageProductsServlet"
+               class="text-gray-600 hover:text-blue-600">Manage Products</a>
           </c:if>
-          <a href="${pageContext.request.contextPath}/logout" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 text-center">Logout</a>
+          <a href="${pageContext.request.contextPath}/logout"
+             class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 text-center">Logout</a>
         </div>
       </c:when>
       <c:otherwise>
         <div class="flex flex-col space-y-2">
-          <a href="${pageContext.request.contextPath}/pages/login.jsp?role=User" class="text-gray-600 hover:text-blue-600">User Login</a>
-          <a href="${pageContext.request.contextPath}/pages/login.jsp?role=Admin" class="text-gray-600 hover:text-blue-600">Admin Login</a>
-          <a href="${pageContext.request.contextPath}/pages/register.jsp" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 text-center">Sign Up</a>
+          <a href="${pageContext.request.contextPath}/pages/login.jsp?role=User"
+             class="text-gray-600 hover:text-blue-600">User Login</a>
+          <a href="${pageContext.request.contextPath}/pages/login.jsp?role=Admin"
+             class="text-gray-600 hover:text-blue-600">Admin Login</a>
+          <a href="${pageContext.request.contextPath}/pages/register.jsp"
+             class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 text-center">Sign Up</a>
         </div>
       </c:otherwise>
     </c:choose>
     <a href="${pageContext.request.contextPath}/cart" class="flex items-center mt-4 text-gray-600 hover:text-blue-600">
-      <i class="fas fa-shopping-cart mr-2"></i> Cart <span class="cart-count ml-2"><%= cartSize %></span>
+      <i class="fas fa-shopping-cart mr-2"></i> Cart <span class="cart-count ml-2">${cartItems != null ? cartItems.size() : 0}</span>
     </a>
-    <div class="mt-4">
-      <a href="${pageContext.request.contextPath}/home" class="text-gray-600 hover:text-blue-600">Home</a>
-    </div>
   </div>
 </nav>
 
 <section class="py-16 bg-gray-50">
   <div class="container">
     <h2 class="text-3xl font-bold text-gray-800 mb-8">Your Shopping Cart</h2>
+    <!-- Debug Info -->
+    <div class="debug-info">
+      <p>Debug: cartItems size = ${cartItems != null ? cartItems.size() : 0}</p>
+      <p>Debug: cartTotal = ${cartTotal != null ? cartTotal : '0.00'}</p>
+      <p>Debug: session id = ${pageContext.session.id}</p>
+    </div>
     <c:if test="${not empty error}">
       <div class="error-message flex items-center">
         <i class="fas fa-exclamation-circle mr-2"></i>${error}
@@ -147,142 +156,106 @@
     </c:if>
     <div class="flex flex-col lg:flex-row gap-8">
       <div class="lg:w-2/3">
+
         <%
-          List<Product> cartItems = null;
-          try {
-            Object cartObj = session.getAttribute("cart");
-            if (cartObj instanceof List) {
-              cartItems = (List<Product>) cartObj;
-            }
-          } catch (ClassCastException e) {
-            cartItems = new ArrayList<>();
-            session.setAttribute("cart", cartItems);
-          }
-          if (cartItems != null && !cartItems.isEmpty()) {
-            java.util.Map<String, Integer> quantities = (java.util.Map<String, Integer>) session.getAttribute("cartQuantities");
-            if (quantities == null) {
-              quantities = new java.util.HashMap<>();
-              session.setAttribute("cartQuantities", quantities);
-            }
-            for (Product product : cartItems) {
-              int quantity = quantities.getOrDefault(product.getProductId(), 1);
-              String imageUrl = product.getImageUrl() != null && !product.getImageUrl().isEmpty() ? product.getImageUrl() : "${pageContext.request.contextPath}/images/product-placeholder.jpg";
+          List<Product> cart = (List<Product>) session.getAttribute("cart");
+          if (cart != null && !cart.isEmpty()) {
+            for (Product product : cart) {
         %>
-        <div class="cart-item card-hover fade-in" data-product-id="<%= product.getProductId() %>">
-          <img src="<%= imageUrl %>" alt="<%= product.getName() %>" class="cart-item-image">
-          <div class="cart-item-details">
-            <h3 class="text-lg font-semibold text-gray-800"><%= product.getName() %></h3>
-            <p class="text-sm text-gray-500">Product ID: <%= product.getProductId() %></p>
-            <p class="text-lg font-medium text-blue-600">$<%= String.format("%.2f", product.getPrice()) %></p>
-          </div>
-          <div class="cart-item-actions">
-            <div class="quantity-control">
-              <button class="quantity-btn minus-btn" data-product-id="<%= product.getProductId() %>" data-price="<%= product.getPrice() %>">-</button>
-              <input type="number" class="quantity-input" value="<%= quantity %>" min="1" readonly>
-              <button class="quantity-btn plus-btn" data-product-id="<%= product.getProductId() %>" data-price="<%= product.getPrice() %>">+</button>
-            </div>
-            <form action="<%= request.getContextPath() %>/cart" method="post">
-              <input type="hidden" name="productId" value="<%= product.getProductId() %>">
-              <input type="hidden" name="action" value="delete">
-              <button type="submit" class="remove-btn">Remove</button>
-            </form>
-          </div>
+        <div>
+          <h1><%= product.getName() %></h1>
+          <h1><%=product.getPrice()  %></h1>
+          <h1><%=product.getProductId()  %></h1>
+          <form action="<%= request.getContextPath() %>/cart" method="post">
+            <input type="hidden" name="productId" value="<%= product.getProductId() %>">
+            <input type="hidden" name="action" value="delete">
+            <button>DELETE</button>
+          </form>
         </div>
+
         <%
           }
         } else {
         %>
-        <p class="empty-cart">Your cart is empty.</p>
+        <p>Your cart is empty.</p>
         <%
           }
         %>
+
+      <%--        <c:choose>--%>
+<%--          <c:when test="${not empty cartItems && cartItems.size() > 0}">--%>
+<%--            <c:forEach var="item" items="${cartItems}">--%>
+<%--              <div class="cart-item card-hover fade-in mb-6 flex flex-col sm:flex-row items-center" itemscope itemtype="https://schema.org/Product">--%>
+<%--                <img src="${item.product.imageUrl}" alt="${item.product.name}" class="w-32 h-32 object-contain rounded-lg mb-4 sm:mb-0 sm:mr-6" loading="lazy" itemprop="image">--%>
+<%--                <div class="flex-1">--%>
+<%--                  <h3 class="text-lg font-semibold text-gray-800 mb-2" itemprop="name">${item.product.name}</h3>--%>
+<%--                  <p class="text-sm text-gray-600 mb-3 line-clamp-2" itemprop="description">${item.product.description}</p>--%>
+<%--                  <div class="flex justify-between items-center">--%>
+<%--                                        <span class="text-xl font-bold text-blue-600" itemprop="offers" itemscope itemtype="https://schema.org/Offer">--%>
+<%--                                            <span itemprop="priceCurrency" content="USD">$</span>--%>
+<%--                                            <span itemprop="price" content="${item.product.price}">${item.product.price}</span>--%>
+<%--                                        </span>--%>
+<%--                    <div class="flex items-center space-x-4">--%>
+<%--                      <form action="${pageContext.request.contextPath}/cart" method="post" class="flex items-center">--%>
+<%--                        <input type="hidden" name="action" value="update">--%>
+<%--                        <input type="hidden" name="productId" value="${item.product.productId}">--%>
+<%--                        <input type="number" name="quantity" value="${item.quantity}" min="1" max="${item.product.stockQuantity}" class="quantity-input"--%>
+<%--                               onchange="this.form.submit()" aria-label="Quantity">--%>
+<%--                      </form>--%>
+<%--                      <form action="${pageContext.request.contextPath}/cart" method="post">--%>
+<%--                        <input type="hidden" name="action" value="remove">--%>
+<%--                        <input type="hidden" name="productId" value="${item.product.productId}">--%>
+<%--                        <button type="submit" class="text-red-600 hover:text-red-800" aria-label="Remove item">--%>
+<%--                          <i class="fas fa-trash-alt"></i>--%>
+<%--                        </button>--%>
+<%--                      </form>--%>
+<%--                    </div>--%>
+<%--                  </div>--%>
+<%--                </div>--%>
+<%--              </div>--%>
+<%--            </c:forEach>--%>
+<%--          </c:when>--%>
+<%--          <c:otherwise>--%>
+<%--            <div class="empty-cart">--%>
+<%--              <i class="fas fa-shopping-cart text-4xl text-gray-600 mb-4"></i>--%>
+<%--              <p>Your cart is empty. Start shopping now!</p>--%>
+<%--              <a href="${pageContext.request.contextPath}/home" class="mt-4 inline-block bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition">--%>
+<%--                Shop Now--%>
+<%--              </a>--%>
+<%--            </div>--%>
+<%--          </c:otherwise>--%>
+<%--        </c:choose>--%>
       </div>
-      <% if (cartItems != null && !cartItems.isEmpty()) { %>
-      <div class="lg:w-1/3">
-        <div class="subtotal-card card-hover sticky top-24">
-          <h3 class="text-xl font-semibold text-gray-800 mb-6">Order Summary</h3>
-          <div class="flex justify-between mb-4">
-            <span class="text-gray-600">Subtotal</span>
-            <span class="text-gray-800 font-medium subtotal-amount">
-              $<c:out value="${cartTotal != null ? String.format('%.2f', cartTotal) : '0.00'}" />
-            </span>
+      <c:if test="${not empty cartItems && cartItems.size() > 0}">
+        <div class="lg:w-1/3">
+          <div class="subtotal-card card-hover sticky top-24">
+            <h3 class="text-xl font-semibold text-gray-800 mb-6">Order Summary</h3>
+            <div class="flex justify-between mb-4">
+              <span class="text-gray-600">Subtotal</span>
+              <span class="text-gray-800 font-medium">
+                                $<c:out value="${cartTotal != null ? cartTotal : '0.00'}" />
+                            </span>
+            </div>
+            <div class="flex justify-between mb-4">
+              <span class="text-gray-600">Shipping</span>
+              <span class="text-gray-800 font-medium">Calculated at checkout</span>
+            </div>
+            <div class="flex justify-between mb-6">
+              <span class="text-gray-800 font-semibold">Total</span>
+              <span class="text-blue-600 font-bold">
+                                $<c:out value="${cartTotal != null ? cartTotal : '0.00'}" />
+                            </span>
+            </div>
+            <a href="${pageContext.request.contextPath}/checkout" class="block w-full bg-blue-600 text-white py-3 rounded-full text-center font-semibold hover:bg-blue-700 transition">
+              Proceed to Checkout
+            </a>
           </div>
-          <div class="flex justify-between mb-4">
-            <span class="text-gray-600">Shipping</span>
-            <span class="text-gray-800 font-medium">Calculated at checkout</span>
-          </div>
-          <div class="flex justify-between mb-6">
-            <span class="text-gray-800 font-semibold">Total</span>
-            <span class="text-blue-600 font-bold total-amount">
-              $<c:out value="${cartTotal != null ? String.format('%.2f', cartTotal) : '0.00'}" />
-            </span>
-          </div>
-          <button id="checkoutBtn" class="block w-full bg-blue-600 text-white py-3 rounded-full text-center font-semibold hover:bg-blue-700 transition">
-            Proceed to Checkout
-          </button>
         </div>
-      </div>
-      <% } %>
+      </c:if>
     </div>
   </div>
 </section>
 
-<!-- Checkout Modal -->
-<div id="checkoutModal" class="modal">
-  <div class="modal-content relative">
-    <span class="modal-close" id="closeCheckoutModal">&times;</span>
-    <h3 class="text-xl font-semibold text-gray-800 mb-4">Checkout</h3>
-    <div class="mb-4">
-      <h4 class="text-lg font-medium text-gray-700">Order Summary</h4>
-      <div class="mt-2">
-        <%
-          double total = 0.0;
-          if (cartItems != null) {
-            java.util.Map<String, Integer> quantities = (java.util.Map<String, Integer>) session.getAttribute("cartQuantities");
-            for (Product product : cartItems) {
-              int qty = quantities.getOrDefault(product.getProductId(), 1);
-              total += product.getPrice() * qty;
-        %>
-        <div class="flex justify-between text-sm text-gray-600">
-          <span><%= product.getName() %> (x<%= qty %>)</span>
-          <span>$<%= String.format("%.2f", product.getPrice() * qty) %></span>
-        </div>
-        <% } } %>
-        <div class="flex justify-between font-semibold text-gray-800 mt-2">
-          <span>Total</span>
-          <span>$<%= String.format("%.2f", total) %></span>
-        </div>
-      </div>
-    </div>
-    <div class="mb-4">
-      <h4 class="text-lg font-medium text-gray-700">Select Payment Method</h4>
-      <div class="mt-2 space-y-2">
-        <label class="flex items-center">
-          <input type="radio" name="paymentMethod" value="Card" class="mr-2" checked> Card
-        </label>
-        <label class="flex items-center">
-          <input type="radio" name="paymentMethod" value="Cash" class="mr-2"> Cash
-        </label>
-        <label class="flex items-center">
-          <input type="radio" name="paymentMethod" value="Cash on Delivery" class="mr-2"> Cash on Delivery
-        </label>
-      </div>
-    </div>
-    <button id="proceedBtn" class="w-full bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700">Proceed</button>
-  </div>
-</div>
-
-<!-- Success Modal -->
-<div id="successModal" class="modal">
-  <div class="modal-content relative">
-    <span class="modal-close" id="closeSuccessModal">&times;</span>
-    <h3 class="text-xl font-semibold text-green-600 mb-4">Order Placed Successfully!</h3>
-    <p class="text-gray-600">Thank you for your order. Please wait for your order to be processed and delivered.</p>
-    <button id="closeSuccessBtn" class="w-full bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700 mt-4">Close</button>
-  </div>
-</div>
-
-<!-- Footer (unchanged) -->
 <footer class="bg-gray-900 text-white py-12">
   <div class="container grid grid-cols-1 md:grid-cols-4 gap-8">
     <div>
@@ -320,7 +293,6 @@
 </footer>
 
 <script>
-  // Mobile menu toggle
   const mobileMenuToggle = document.getElementById('mobileMenuToggle');
   const mobileMenu = document.getElementById('mobileMenu');
   if (mobileMenuToggle && mobileMenu) {
@@ -329,7 +301,6 @@
     });
   }
 
-  // Login dropdown
   const loginDropdown = document.querySelector('.login-dropdown');
   if (loginDropdown) {
     loginDropdown.addEventListener('mouseenter', () => {
@@ -340,122 +311,14 @@
     });
   }
 
-  // Quantity update function
-  function updateQuantity(productId, change) {
-    const cartItem = document.querySelector(`.cart-item[data-product-id="${productId}"]`);
-    const input = cartItem.querySelector('.quantity-input');
-    let quantity = parseInt(input.value) + change;
-    if (quantity < 1) quantity = 1;
-    input.value = quantity;
-
-    // Update server via AJAX
-    fetch('<%= request.getContextPath() %>/cart', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: `action=update&productId=${productId}&quantity=${quantity}`
-    })
-            .then(response => response.json())
-            .then(data => {
-              if (data.success) {
-                // Update subtotal and total
-                const subtotalElement = document.querySelector('.subtotal-amount');
-                const totalElement = document.querySelector('.total-amount');
-                subtotalElement.textContent = `$${data.cartTotal.toFixed(2)}`;
-                totalElement.textContent = `$${data.cartTotal.toFixed(2)}`;
-
-                // Update cart count
-                const cartCounts = document.querySelectorAll('.cart-count');
-                cartCounts.forEach(count => {
-                  count.textContent = data.cartSize;
-                });
-              } else {
-                alert('Failed to update quantity. Please try again.');
-                input.value = parseInt(input.value) - change; // Revert on failure
-              }
-            })
-            .catch(error => {
-              console.error('Error updating quantity:', error);
-              alert('An error occurred. Please try again.');
-              input.value = parseInt(input.value) - change; // Revert on failure
-            });
-  }
-
-  // Attach event listeners to quantity buttons
-  document.querySelectorAll('.minus-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const productId = btn.dataset.productId;
-      updateQuantity(productId, -1);
-    });
-  });
-
-  document.querySelectorAll('.plus-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const productId = btn.dataset.productId;
-      updateQuantity(productId, 1);
-    });
-  });
-
-  // Remove button confirmation
-  document.querySelectorAll('.remove-btn').forEach(button => {
+  document.querySelectorAll('.cart-item form button').forEach(button => {
     button.addEventListener('click', (e) => {
-      if (!confirm('Are you sure you want to remove this item from your cart?')) {
-        e.preventDefault();
+      if (button.closest('form').querySelector('input[name="action"]').value === 'remove') {
+        if (!confirm('Are you sure you want to remove this item from your cart?')) {
+          e.preventDefault();
+        }
       }
     });
-  });
-
-  // Modal handling
-  const checkoutBtn = document.getElementById('checkoutBtn');
-  const checkoutModal = document.getElementById('checkoutModal');
-  const closeCheckoutModal = document.getElementById('closeCheckoutModal');
-  const proceedBtn = document.getElementById('proceedBtn');
-  const successModal = document.getElementById('successModal');
-  const closeSuccessModal = document.getElementById('closeSuccessModal');
-  const closeSuccessBtn = document.getElementById('closeSuccessBtn');
-
-  if (checkoutBtn && checkoutModal) {
-    checkoutBtn.addEventListener('click', () => {
-      checkoutModal.style.display = 'block';
-    });
-  }
-
-  if (closeCheckoutModal && checkoutModal) {
-    closeCheckoutModal.addEventListener('click', () => {
-      checkoutModal.style.display = 'none';
-    });
-  }
-
-  if (proceedBtn && successModal) {
-    proceedBtn.addEventListener('click', () => {
-      checkoutModal.style.display = 'none';
-      successModal.style.display = 'block';
-    });
-  }
-
-  if (closeSuccessModal && successModal) {
-    closeSuccessModal.addEventListener('click', () => {
-      successModal.style.display = 'none';
-    });
-  }
-
-  if (closeSuccessBtn && successModal) {
-    closeSuccessBtn.addEventListener('click', () => {
-      successModal.style.display = 'none';
-      window.location.href = '<%= request.getContextPath() %>/home'; // Redirect to home
-    });
-  }
-
-  // Close modals when clicking outside
-  window.addEventListener('click', (e) => {
-    if (e.target === checkoutModal) {
-      checkoutModal.style.display = 'none';
-    }
-    if (e.target === successModal) {
-      successModal.style.display = 'none';
-    }
   });
 </script>
 </body>
