@@ -1,1 +1,2 @@
-admin,admin123,Admin user,user123,User
+admin,admin123,admin
+test,test123,user
