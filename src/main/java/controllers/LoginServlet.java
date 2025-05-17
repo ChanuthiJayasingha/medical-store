@@ -15,7 +15,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        fileHandler = new FileHandler();
+        fileHandler = new FileHandler(getServletContext());
     }
 
     @Override
@@ -23,24 +23,39 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        // For this example, treat 'admin' as admin, everything else as user
-        String role = "user";
-        if ("admin".equalsIgnoreCase(username)) {
+        
+        // Debug logging
+        System.out.println("Login attempt for username: " + username);
+        
+        // Make role determination more flexible
+        String role = null;
+        
+        // First try as admin
+        if (fileHandler.authenticateUser(username, password, "admin")) {
             role = "admin";
+        } 
+        // Then try as regular user
+        else if (fileHandler.authenticateUser(username, password, "user")) {
+            role = "user";
         }
-
-        boolean authenticated = fileHandler.authenticateUser(username, password, role);
-
-        if (authenticated) {
+        
+        if (role != null) {
+            // Authentication successful
+            System.out.println("Login successful for: " + username + " with role: " + role);
+            
             HttpSession session = request.getSession();
             session.setAttribute("user", username);
             session.setAttribute("role", role);
+            
             if ("admin".equalsIgnoreCase(role)) {
                 response.sendRedirect(request.getContextPath() + "/pages/adminDashboard.jsp");
             } else {
                 response.sendRedirect(request.getContextPath() + "/pages/userDashboard.jsp");
             }
         } else {
+            // Authentication failed
+            System.out.println("Login failed for: " + username);
+            
             request.setAttribute("errorMessage", "Invalid username or password");
             request.setAttribute("showLoginModal", true);
             request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
