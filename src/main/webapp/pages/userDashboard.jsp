@@ -23,6 +23,7 @@
                 <a href="#" class="hover:text-blue-600 flex items-center gap-1"><i class="fas fa-pills"></i> Shop</a>
                 <a href="#" class="hover:text-blue-600 flex items-center gap-1"><i class="fas fa-prescription-bottle-alt"></i> Prescriptions</a>
                 <a href="#" class="hover:text-blue-600 flex items-center gap-1"><i class="fas fa-question-circle"></i> Help</a>
+                <a href="${pageContext.request.contextPath}/logout" class="hover:text-blue-600 flex items-center gap-1"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </nav>
             <div class="flex items-center gap-4">
                 <div class="relative">
@@ -57,7 +58,7 @@
                 <li><a href="#" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50"><i class="fas fa-map-marker-alt"></i> Address Book</a></li>
                 <li><a href="#" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50"><i class="fas fa-bell"></i> Notifications</a></li>
                 <li><a href="#" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50"><i class="fas fa-cog"></i> Settings</a></li>
-                <li><a href="#" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-red-50 text-red-600"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li><a href="${pageContext.request.contextPath}/logout" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-red-50 text-red-600"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </aside>
 
