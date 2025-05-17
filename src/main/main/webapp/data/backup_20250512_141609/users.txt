@@ -1,0 +1,4 @@
+Admin User,admin,admin123,Admin,1234567890,admin@medicare.com,123 Admin St,1980-01-01,Male
+Test User,user,user123,User,9876543210,user@medicare.com,456 User Rd,1990-05-15,Female
+Hasitha Erandika Wickramasinghe,patient1,pass123,User,0777802707,wickramasinghe.erandika@gmail.com,174/A, Annasigalahena,
+Pitumpe,,2003-01-28,Male

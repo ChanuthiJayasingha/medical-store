@@ -1,0 +1,10 @@
+P001,Aspirin 325mg,Pain reliever and fever reducer,5.99,100,https://images-na.ssl-images-amazon.com/images/I/71X8Z0Z0Z0L._AC_SL1500_.jpg,Medicines
+P002,Omega-3 Fish Oil 1000mg,Supports heart and brain health,12.49,60,https://www.naturesbounty.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/0/0/00837_1.jpg,Wellness
+P003,Blood Pressure Monitor,Accurate wrist blood pressure monitor,29.99,50,https://omronhealthcare.com/wp-content/uploads/2020/09/BP6100_3-Series-Wrist-Blood-Pressure-Monitor.png,Devices
+P004,Moisturizing Lotion,Hydrates dry skin,8.99,75,https://www.cetaphil.com/us/sites/default/files/styles/product_image/public/product-images/2021-09/Cetaphil_Moisturizing_Lotion_16oz.png,Personal Care
+P005,Ibuprofen 200mg,Relieves minor aches and pains,6.49,120,https://images-na.ssl-images-amazon.com/images/I/81Z8Z8Z8Z8L._AC_SL1500_.jpg,Medicines
+P006,Multivitamin Tablets,Daily essential vitamins and minerals,9.99,90,https://www.centrum.com/content/dam/cf-consumer-healthcare/centrum/en_US/product-images/centrum-adults-multivitamin-130-tablets.png,Wellness
+P007,Glucose Meter,Fast and reliable blood sugar testing,24.99,30,https://www.onetouch.com/sites/default/files/2020-03/verio_reflect_meter.png,Devices
+P008,Antibacterial Soap,Gentle cleansing with antibacterial protection,4.99,80,https://www.dialsoap.com/wp-content/uploads/2020/05/Dial_Antibacterial_Liquid_Hand_Soap_Gold_7.5oz.png,Personal Care
+P009,Antacid Tablets,Relieves heartburn and indigestion,7.49,150,https://www.tums.com/wp-content/uploads/2020/06/TUMS_Ultra_Strength_1000_Assorted_Berries_72ct.png,Medicines
+P010,Vitamin D3 2000 IU,Supports bone and immune health,10.99,100,https://www.naturemade.com/media/wysiwyg/products/Vitamin_D3_2000_IU_Softgels_100ct.png,Wellness

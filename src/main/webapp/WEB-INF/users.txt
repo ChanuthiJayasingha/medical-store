@@ -1,0 +1,6 @@
+admin,admin123,admin
+admin2,admin246,admin
+admin3,admin369,admin
+user,user123,user
+user2,user258,user
+user3,user369,user
