@@ -33,11 +33,10 @@
                 <a href="index.jsp" class="text-2xl font-bold text-blue-600">MediCare</a>
             </div>
             <div class="flex items-center space-x-4">
-                <div class="relative">
-                    <input type="text" placeholder="Search medicines..."
-                           class="w-64 px-4 py-2 rounded-full border focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <form id="searchForm" class="relative" action="search.jsp" method="get" onsubmit="return handleSearch(event)">
+                    <input type="text" id="searchInput" name="query" placeholder="Search medicines..." class="w-48 px-4 py-2 rounded-full border focus:outline-none focus:ring-2 focus:ring-blue-400">
                     <i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
-                </div>
+                </form>
                 <a href="cart.jsp" class="relative">
                     <i class="fas fa-shopping-cart text-gray-600 text-xl"></i>
                     <span class="absolute cart-count bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
@@ -82,7 +81,7 @@
             <a href="#shop" class="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-gray-100">Shop Now</a>
         </div>
         <div class="w-1/2">
-            <img src="https://via.placeholder.com/500" alt="Medicines" class="rounded-lg shadow-lg">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3mZshXdfbdTXdqrwshENauZ8TUUXB8x1WUw&s" alt="Medicines" class="rounded-lg shadow-lg">
         </div>
     </div>
 </section>
@@ -122,25 +121,25 @@
         <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Featured Products</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="card-hover bg-white p-6 rounded-lg shadow-md transition duration-300">
-                <img src="https://via.placeholder.com/200" alt="Product" class="w-full h-40 object-cover rounded-lg mb-4">
+                <img src="https://www.mccabespharmacy.com/cdn/shop/files/PfizerParacetamol500mgFilmCoatedTablets24Pack.jpg?v=1704467734" alt="Product" class="w-full h-40 object-cover rounded-lg mb-4">
                 <h3 class="text-lg font-semibold text-gray-800">Paracetamol 500mg</h3>
                 <p class="text-gray-600">$5.99</p>
                 <button class="add-to-cart-btn bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700">Add to Cart</button>
             </div>
             <div class="card-hover bg-white p-6 rounded-lg shadow-md transition duration-300">
-                <img src="https://via.placeholder.com/200" alt="Product" class="w-full h-40 object-cover rounded-lg mb-4">
+                <img src="https://shopxonline.lk/cdn/shop/files/acorbic-c-1000mg-30-tablet-689658.jpg?v=1725942105" alt="Product" class="w-full h-40 object-cover rounded-lg mb-4">
                 <h3 class="text-lg font-semibold text-gray-800">Vitamin C 1000mg</h3>
                 <p class="text-gray-600">$12.99</p>
                 <button class="add-to-cart-btn bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700">Add to Cart</button>
             </div>
             <div class="card-hover bg-white p-6 rounded-lg shadow-md transition duration-300">
-                <img src="https://via.placeholder.com/200" alt="Product" class="w-full h-40 object-cover rounded-lg mb-4">
+                <img src="https://m.media-amazon.com/images/I/6138LurvciL.jpg" alt="Product" class="w-full h-40 object-cover rounded-lg mb-4">
                 <h3 class="text-lg font-semibold text-gray-800">Blood Pressure Monitor</h3>
                 <p class="text-gray-600">$49.99</p>
                 <button class="add-to-cart-btn bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700">Add to Cart</button>
             </div>
             <div class="card-hover bg-white p-6 rounded-lg shadow-md transition duration-300">
-                <img src="https://via.placeholder.com/200" alt="Product" class="w-full h-40 object-cover rounded-lg mb-4">
+                <img src="https://www.beautyheaven.com.au/wp-content/uploads/2013/03/Cetaphil-Pro-Acne-Prone-Oil-Control-Foam-Face-Wash-236mL-1_bh.jpg" alt="Product" class="w-full h-40 object-cover rounded-lg mb-4">
                 <h3 class="text-lg font-semibold text-gray-800">Face Wash</h3>
                 <p class="text-gray-600">$9.99</p>
                 <button class="add-to-cart-btn bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700">Add to Cart</button>

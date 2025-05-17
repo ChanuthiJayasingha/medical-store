@@ -8,12 +8,27 @@ import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.File;
+import jakarta.servlet.ServletContext;
 
 public class FileHandler {
     private static final String USERS_FILE = "data/users.txt";
+    private ServletContext servletContext;
+
+    public FileHandler() {}
+    public FileHandler(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
 
     public boolean authenticateUser(String username, String password, String role) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(USERS_FILE))) {
+        BufferedReader reader = null;
+        try {
+            if (servletContext != null) {
+                String path = servletContext.getRealPath("/WEB-INF/users.txt");
+                reader = new BufferedReader(new FileReader(path));
+            } else {
+                // fallback for legacy usage
+                reader = new BufferedReader(new FileReader("data/users.txt"));
+            }
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
@@ -26,6 +41,10 @@ public class FileHandler {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try { reader.close(); } catch (IOException e) { e.printStackTrace(); }
+            }
         }
         return false;
     }

@@ -1,316 +1,189 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediCare - My Account</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="user-styles.css">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
-<body>
-<div class="user-dashboard-container">
+<body class="bg-gray-100 font-sans">
+<div class="min-h-screen flex flex-col">
     <!-- Header -->
-    <header class="user-header">
-        <div class="logo">
-            <a href="#">
-                <i class="fas fa-heartbeat"></i>
-                <span>MediCare</span>
+    <header class="bg-white shadow sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="#" class="text-2xl font-bold text-blue-600 flex items-center gap-2">
+                <i class="fas fa-heartbeat"></i> MediCare
             </a>
-        </div>
-        <nav class="user-nav">
-            <ul>
-                <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="#"><i class="fas fa-pills"></i> Shop</a></li>
-                <li><a href="#"><i class="fas fa-prescription-bottle-alt"></i> Prescriptions</a></li>
-                <li><a href="#"><i class="fas fa-question-circle"></i> Help</a></li>
-            </ul>
-        </nav>
-        <div class="user-actions">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search medicines...">
-            </div>
-            <div class="cart">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="cart-count">3</span>
-            </div>
-            <div class="user-profile">
-                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User">
-                <span>Sarah Johnson</span>
+            <nav class="flex gap-6 text-gray-700">
+                <a href="#" class="hover:text-blue-600 flex items-center gap-1"><i class="fas fa-home"></i> Home</a>
+                <a href="#" class="hover:text-blue-600 flex items-center gap-1"><i class="fas fa-pills"></i> Shop</a>
+                <a href="#" class="hover:text-blue-600 flex items-center gap-1"><i class="fas fa-prescription-bottle-alt"></i> Prescriptions</a>
+                <a href="#" class="hover:text-blue-600 flex items-center gap-1"><i class="fas fa-question-circle"></i> Help</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <div class="relative">
+                    <input type="text" placeholder="Search medicines..." class="w-48 px-4 py-2 rounded-full border focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    <i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
+                </div>
+                <a href="#" class="relative">
+                    <i class="fas fa-shopping-cart text-gray-600 text-xl"></i>
+                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                </a>
+                <div class="flex items-center gap-2">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="w-8 h-8 rounded-full border-2 border-blue-600">
+                    <span class="font-semibold text-gray-700">John Doe</span>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="user-main-content">
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 py-8 flex flex-col lg:flex-row gap-8">
         <!-- Sidebar -->
-        <aside class="user-sidebar">
-            <div class="user-info">
-                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User">
-                <h3>Sarah Johnson</h3>
-                <p>Member since: Jan 2022</p>
+        <aside class="w-full lg:w-1/4 bg-white rounded-xl shadow p-6 mb-8 lg:mb-0">
+            <div class="flex flex-col items-center">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="w-20 h-20 rounded-full border-4 border-blue-500 mb-3">
+                <h3 class="text-xl font-bold text-gray-800">John Doe</h3>
+                <p class="text-gray-500 text-sm mb-4">Member since: Jan 2022</p>
             </div>
-            <ul class="user-menu">
-                <li class="active"><a href="#"><i class="fas fa-user"></i> My Profile</a></li>
-                <li><a href="#"><i class="fas fa-shopping-bag"></i> My Orders</a></li>
-                <li><a href="#"><i class="fas fa-prescription-bottle-alt"></i> My Prescriptions</a></li>
-                <li><a href="#"><i class="fas fa-heart"></i> My Wishlist</a></li>
-                <li><a href="#"><i class="fas fa-map-marker-alt"></i> Address Book</a></li>
-                <li><a href="#"><i class="fas fa-bell"></i> Notifications</a></li>
-                <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            <ul class="space-y-2 mt-6">
+                <li><a href="#" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 text-blue-600 font-semibold"><i class="fas fa-user"></i> My Profile</a></li>
+                <li><a href="#" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50"><i class="fas fa-shopping-bag"></i> My Orders</a></li>
+                <li><a href="#" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50"><i class="fas fa-prescription-bottle-alt"></i> My Prescriptions</a></li>
+                <li><a href="#" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50"><i class="fas fa-heart"></i> My Wishlist</a></li>
+                <li><a href="#" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50"><i class="fas fa-map-marker-alt"></i> Address Book</a></li>
+                <li><a href="#" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a href="#" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="#" class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-red-50 text-red-600"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </aside>
 
-        <!-- Dashboard Content -->
-        <div class="user-dashboard-content">
-            <div class="welcome-banner">
-                <h1>Welcome back, Sarah!</h1>
-                <p>Here's what's happening with your account today.</p>
+        <!-- Main Dashboard Content -->
+        <section class="flex-1 flex flex-col gap-8">
+            <!-- Welcome Banner -->
+            <div class="bg-gradient-to-r from-blue-500 to-green-400 text-white rounded-xl p-8 shadow flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">Welcome back, John!</h1>
+                    <p class="text-lg">Here's what's happening with your account today.</p>
+                </div>
+                <div class="flex gap-4 mt-4 md:mt-0">
+                    <a href="#" class="bg-white text-blue-600 px-4 py-2 rounded-full font-semibold hover:bg-gray-100 transition">Shop Now</a>
+                    <a href="#" class="bg-white text-green-600 px-4 py-2 rounded-full font-semibold hover:bg-gray-100 transition">Order History</a>
+                </div>
             </div>
 
             <!-- Quick Stats -->
-            <div class="quick-stats">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-shopping-bag"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>5</h3>
-                        <p>Active Orders</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-xl shadow p-6 flex items-center gap-4">
+                    <div class="bg-blue-100 text-blue-600 rounded-full p-3 text-2xl"><i class="fas fa-shopping-bag"></i></div>
+                    <div>
+                        <h3 class="text-2xl font-bold">5</h3>
+                        <p class="text-gray-500">Active Orders</p>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>12</h3>
-                        <p>Completed Orders</p>
+                <div class="bg-white rounded-xl shadow p-6 flex items-center gap-4">
+                    <div class="bg-green-100 text-green-600 rounded-full p-3 text-2xl"><i class="fas fa-check-circle"></i></div>
+                    <div>
+                        <h3 class="text-2xl font-bold">12</h3>
+                        <p class="text-gray-500">Completed Orders</p>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>8</h3>
-                        <p>Wishlist Items</p>
+                <div class="bg-white rounded-xl shadow p-6 flex items-center gap-4">
+                    <div class="bg-pink-100 text-pink-600 rounded-full p-3 text-2xl"><i class="fas fa-heart"></i></div>
+                    <div>
+                        <h3 class="text-2xl font-bold">8</h3>
+                        <p class="text-gray-500">Wishlist Items</p>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-prescription-bottle-alt"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>3</h3>
-                        <p>Active Prescriptions</p>
+                <div class="bg-white rounded-xl shadow p-6 flex items-center gap-4">
+                    <div class="bg-yellow-100 text-yellow-600 rounded-full p-3 text-2xl"><i class="fas fa-prescription-bottle-alt"></i></div>
+                    <div>
+                        <h3 class="text-2xl font-bold">3</h3>
+                        <p class="text-gray-500">Active Prescriptions</p>
                     </div>
                 </div>
             </div>
 
             <!-- Recent Orders -->
-            <div class="dashboard-section">
-                <div class="section-header">
-                    <h2>Recent Orders</h2>
-                    <a href="#" class="view-all">View All</a>
+            <div class="bg-white rounded-xl shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">Recent Orders</h2>
+                    <a href="#" class="text-blue-600 hover:underline">View All</a>
                 </div>
-                <div class="orders-list">
-                    <div class="order-card">
-                        <div class="order-info">
-                            <h4>Order #MED78945</h4>
-                            <p>Placed on May 10, 2023</p>
-                            <div class="order-status shipped">
-                                <i class="fas fa-truck"></i>
-                                Shipped
-                            </div>
+                <div class="divide-y divide-gray-200">
+                    <div class="flex items-center justify-between py-4">
+                        <div>
+                            <h4 class="font-semibold">Order #MED78945</h4>
+                            <p class="text-gray-500 text-sm">Placed on May 10, 2023</p>
+                            <span class="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-600 rounded text-xs mt-1"><i class="fas fa-truck mr-1"></i> Shipped</span>
                         </div>
-                        <div class="order-details">
-                            <div class="order-items">
-                                <img src="https://via.placeholder.com/60" alt="Product">
-                                <img src="https://via.placeholder.com/60" alt="Product">
-                                <img src="https://via.placeholder.com/60" alt="Product">
-                                <span class="more-items">+2 more</span>
-                            </div>
-                            <div class="order-total">
-                                <h4>$87.50</h4>
-                                <a href="#" class="btn btn-outline">Track Order</a>
-                            </div>
+                        <div class="flex items-center gap-2">
+                            <img src="https://via.placeholder.com/40" class="rounded" alt="Product">
+                            <img src="https://via.placeholder.com/40" class="rounded" alt="Product">
+                            <span class="text-gray-400 text-xs">+2 more</span>
+                        </div>
+                        <div class="text-right">
+                            <h4 class="font-bold">$87.50</h4>
+                            <a href="#" class="text-blue-600 hover:underline text-sm">Track Order</a>
                         </div>
                     </div>
-                    <div class="order-card">
-                        <div class="order-info">
-                            <h4>Order #MED78944</h4>
-                            <p>Placed on May 5, 2023</p>
-                            <div class="order-status delivered">
-                                <i class="fas fa-check-circle"></i>
-                                Delivered
-                            </div>
+                    <div class="flex items-center justify-between py-4">
+                        <div>
+                            <h4 class="font-semibold">Order #MED78944</h4>
+                            <p class="text-gray-500 text-sm">Placed on May 5, 2023</p>
+                            <span class="inline-flex items-center px-2 py-1 bg-green-100 text-green-600 rounded text-xs mt-1"><i class="fas fa-check-circle mr-1"></i> Delivered</span>
                         </div>
-                        <div class="order-details">
-                            <div class="order-items">
-                                <img src="https://via.placeholder.com/60" alt="Product">
-                                <img src="https://via.placeholder.com/60" alt="Product">
-                            </div>
-                            <div class="order-total">
-                                <h4>$42.99</h4>
-                                <a href="#" class="btn btn-outline">Reorder</a>
-                            </div>
+                        <div class="flex items-center gap-2">
+                            <img src="https://via.placeholder.com/40" class="rounded" alt="Product">
+                            <img src="https://via.placeholder.com/40" class="rounded" alt="Product">
+                        </div>
+                        <div class="text-right">
+                            <h4 class="font-bold">$42.99</h4>
+                            <a href="#" class="text-blue-600 hover:underline text-sm">Reorder</a>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Health Reminders -->
-            <div class="dashboard-section">
-                <div class="section-header">
-                    <h2>Health Reminders</h2>
-                    <a href="#" class="view-all">Manage</a>
+            <div class="bg-white rounded-xl shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">Health Reminders</h2>
+                    <a href="#" class="text-blue-600 hover:underline">Manage</a>
                 </div>
-                <div class="reminders-list">
-                    <div class="reminder-card">
-                        <div class="reminder-icon">
-                            <i class="fas fa-pills"></i>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-center gap-4 bg-blue-50 rounded-lg p-4">
+                        <div class="bg-blue-200 text-blue-700 rounded-full p-3 text-xl"><i class="fas fa-pills"></i></div>
+                        <div>
+                            <h4 class="font-semibold">Vitamin D3</h4>
+                            <p class="text-gray-500 text-sm">Take 1 capsule daily with breakfast</p>
+                            <div class="flex items-center gap-1 text-xs text-gray-400 mt-1"><i class="fas fa-clock"></i> 8:00 AM (Daily)</div>
                         </div>
-                        <div class="reminder-info">
-                            <h4>Vitamin D3</h4>
-                            <p>Take 1 capsule daily with breakfast</p>
-                            <div class="reminder-time">
-                                <i class="fas fa-clock"></i>
-                                8:00 AM (Daily)
-                            </div>
-                        </div>
-                        <div class="reminder-actions">
-                            <button class="btn btn-success">Taken</button>
-                        </div>
+                        <button class="ml-auto bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Taken</button>
                     </div>
-                    <div class="reminder-card">
-                        <div class="reminder-icon">
-                            <i class="fas fa-prescription-bottle-alt"></i>
+                    <div class="flex items-center gap-4 bg-green-50 rounded-lg p-4">
+                        <div class="bg-green-200 text-green-700 rounded-full p-3 text-xl"><i class="fas fa-prescription-bottle-alt"></i></div>
+                        <div>
+                            <h4 class="font-semibold">Amoxicillin</h4>
+                            <p class="text-gray-500 text-sm">Take 1 tablet every 8 hours (3 times daily)</p>
+                            <div class="flex items-center gap-1 text-xs text-gray-400 mt-1"><i class="fas fa-clock"></i> Next dose at 2:00 PM</div>
                         </div>
-                        <div class="reminder-info">
-                            <h4>Amoxicillin</h4>
-                            <p>Take 1 tablet every 8 hours (3 times daily)</p>
-                            <div class="reminder-time">
-                                <i class="fas fa-clock"></i>
-                                Next dose at 2:00 PM
-                            </div>
-                        </div>
-                        <div class="reminder-actions">
-                            <button class="btn btn-outline">Snooze</button>
-                        </div>
+                        <button class="ml-auto bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">Taken</button>
                     </div>
                 </div>
             </div>
-
-            <!-- Recommended Products -->
-            <div class="dashboard-section">
-                <div class="section-header">
-                    <h2>Recommended For You</h2>
-                    <a href="#" class="view-all">Browse All</a>
-                </div>
-                <div class="products-grid">
-                    <div class="product-card">
-                        <div class="product-badge">15% OFF</div>
-                        <img src="https://via.placeholder.com/150" alt="Product">
-                        <div class="product-info">
-                            <h4>Vitamin C 1000mg</h4>
-                            <p>60 Tablets</p>
-                            <div class="product-price">
-                                <span class="current-price">$12.99</span>
-                                <span class="original-price">$15.29</span>
-                            </div>
-                            <button class="btn btn-primary">Add to Cart</button>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <img src="https://via.placeholder.com/150" alt="Product">
-                        <div class="product-info">
-                            <h4>Omega-3 Fish Oil</h4>
-                            <p>120 Softgels</p>
-                            <div class="product-price">
-                                <span class="current-price">$18.50</span>
-                            </div>
-                            <button class="btn btn-primary">Add to Cart</button>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <div class="product-badge">NEW</div>
-                        <img src="https://via.placeholder.com/150" alt="Product">
-                        <div class="product-info">
-                            <h4>Probiotic Complex</h4>
-                            <p>30 Capsules</p>
-                            <div class="product-price">
-                                <span class="current-price">$24.99</span>
-                            </div>
-                            <button class="btn btn-primary">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </section>
     </main>
 
     <!-- Footer -->
-    <footer class="user-footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Shop</a></li>
-                    <li><a href="#">Prescriptions</a></li>
-                    <li><a href="#">My Account</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Customer Service</h4>
-                <ul>
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="#">FAQs</a></li>
-                    <li><a href="#">Shipping Policy</a></li>
-                    <li><a href="#">Returns & Refunds</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>About MediCare</h4>
-                <ul>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms & Conditions</a></li>
-                    <li><a href="#">Blog</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Connect With Us</h4>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                </div>
-                <div class="newsletter">
-                    <p>Subscribe to our newsletter</p>
-                    <div class="newsletter-input">
-                        <input type="email" placeholder="Your email">
-                        <button><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2023 MediCare. All rights reserved.</p>
-            <div class="payment-methods">
-                <i class="fab fa-cc-visa"></i>
-                <i class="fab fa-cc-mastercard"></i>
-                <i class="fab fa-cc-paypal"></i>
-                <i class="fab fa-cc-apple-pay"></i>
-            </div>
+    <footer class="bg-gray-800 text-white py-8 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-400">© 2025 MediCare. All rights reserved.</p>
         </div>
     </footer>
 </div>
-
-<script src="user-script.js"></script>
 </body>
 </html>
