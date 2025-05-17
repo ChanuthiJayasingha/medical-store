@@ -256,7 +256,7 @@
                 const matchesSearch = username.includes(searchText);
                 const matchesRole = roleFilter === 'all' || role === roleFilter;
                 row.style.display = matchesSearch && matchesRole ? '' : 'none';
-            });
+            }  );
         }
     </script>
 </body>

@@ -177,7 +177,7 @@
                 </div>
             </div>
         </section>
-    </main>
+    </main >
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8 mt-8">
