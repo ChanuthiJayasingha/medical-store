@@ -1,0 +1,37 @@
+AUD001,admin,Accessed audit logs,2025-05-05 12:00:00
+AUD002,admin,Added feedback: FDB001,2025-05-05 12:01:00
+AUD003,admin,Deleted feedback: FDB002,2025-05-05 12:02:00
+AUD004,admin,Accessed audit logs,2025-05-05 12:03:00
+AUD005,admin,Added user: user123,2025-05-05 12:04:00
+AUD006,admin,Accessed audit logs,2025-05-05 17:37:55
+AUD001: Accessed audit logs performed by admin at 20250505_175254
+AUD002: Accessed audit logs performed by admin at 20250508_100159
+AUD003: Accessed audit logs performed by admin at 20250512_140537
+AUD004: Accessed audit logs performed by admin at 20250512_140844
+AUD005: Accessed audit logs performed by admin at 20250512_140854
+AUD006: Accessed audit logs performed by admin at 20250512_140901
+AUD007: Cleared audit logs performed by admin at 20250512_140909
+AUD008: Accessed audit logs performed by admin at 20250512_140909
+AUD009: Accessed audit logs performed by admin at 20250512_141346
+AUD010: Accessed audit logs performed by admin at 20250512_141408
+AUD011: Accessed audit logs performed by admin at 20250512_141415
+AUD012: Accessed audit logs performed by admin at 20250512_141606
+AUD013: Accessed audit logs performed by admin at 20250512_141609
+AUD014: Accessed audit logs performed by admin at 20250512_141640
+AUD015: Backup created performed by admin at 20250512_141641
+AUD016: Accessed audit logs performed by admin at 20250512_141641
+AUD017: Cleared audit logs performed by admin at 20250512_141701
+AUD018: Accessed audit logs performed by admin at 20250512_141701
+AUD019: Accessed audit logs performed by admin at 20250512_141807
+AUD020: Accessed audit logs performed by admin at 20250512_142956
+Backup created at 20250512_143011 by admin
+AUD021: Backup created performed by admin at 20250512_143011
+AUD022: Accessed audit logs performed by admin at 20250512_143011
+70e0093a-ee87-4405-8137-10e4d74c9fe1,admin,Accessed admin dashboard,2025-05-12 14:30:52
+AUD023: Accessed audit logs performed by admin at 20250512_143053
+d3713eaa-1add-47c7-870e-ce495c6eed99,admin,Accessed admin dashboard,2025-05-12 14:30:54
+de5f7808-4942-4e69-9119-195384b35c04,admin,Accessed admin dashboard,2025-05-12 14:30:59
+AUD024: Accessed audit logs performed by admin at 20250512_143440
+AUD025: Accessed audit logs performed by admin at 20250512_144441
+AUD026: Accessed audit logs performed by admin at 20250512_144601
+AUD027: Accessed audit logs performed by admin at 20250512_145256
