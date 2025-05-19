@@ -1,25 +1,59 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+package services;
 
+import jakarta.servlet.ServletContext;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ * Simplified file handler for reading and writing lines to a file.
+ */
 public class FileHandler {
-    private static final String USERS_FILE = "data/users.txt";
+    private static final Logger LOGGER = Logger.getLogger(FileHandler.class.getName());
+    private final String filePath;
 
-    public boolean authenticateUser(String username, String password, String role) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(USERS_FILE))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length == 3 &&
-                        parts[0].equals(username) &&
-                        parts[1].equals(password) &&
-                        parts[2].equals(role)) {
-                    return true;
-                }
+    public FileHandler(String filePath) {
+        this.filePath = filePath;
+    }
+
+    /**
+     * Reads all lines from the file.
+     * @return List of lines, or empty list if file is inaccessible.
+     */
+    public List<String> readLines() {
+        try {
+            Path path = Paths.get(filePath);
+            if (!Files.exists(path)) {
+                LOGGER.warning("File not found: " + filePath);
+                return new ArrayList<>();
             }
+            return Files.readAllLines(path);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error reading file: " + filePath, e);
+            return new ArrayList<>();
         }
-        return false;
+    }
+
+    /**
+     * Writes lines to the file, overwriting existing content.
+     * @param lines List of lines to write.
+     */
+    public void writeLines(List<String> lines) {
+        try {
+            Path path = Paths.get(filePath);
+            Files.createDirectories(path.getParent());
+            Files.write(path, lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            LOGGER.info("File written successfully: " + filePath);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error writing to file: " + filePath, e);
+            throw new RuntimeException("Failed to write to file: " + e.getMessage());
+        }
     }
 }
