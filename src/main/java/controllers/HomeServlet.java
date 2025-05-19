@@ -70,11 +70,12 @@ public class HomeServlet extends HttpServlet {
             LOGGER.log(Level.SEVERE, "Failed to load products: " + e.getMessage(), e);
             request.setAttribute("error", "Unable to load products due to a server error. Please try again later.");
         }
-
+        System.out.println(products.size());
         request.setAttribute("products", products);
         try {
-            LOGGER.info("Forwarding to /pages/index.jsp");
+            LOGGER.info("Forwarding to /home");
             request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Failed to forward to index.jsp", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Server error: Unable to render page.");
