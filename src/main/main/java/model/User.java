@@ -1,8 +1,6 @@
 package model;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
@@ -134,15 +132,6 @@ public class User {
         this.gender = gender;
     }
 
-    /**
-     * Returns the birthday as a java.util.Date for use with JSTL fmt:formatDate.
-     *
-     * @return the birthday as a java.util.Date, or null if birthday is null
-     */
-    public Date getBirthdayAsDate() {
-        return birthday != null ? Date.from(birthday.atStartOfDay(ZoneId.systemDefault()).toInstant()) : null;
-    }
-
     private void validateFullName(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) {
             throw new IllegalArgumentException("Full name cannot be null or empty");
@@ -201,9 +190,6 @@ public class User {
         if (address == null || address.trim().isEmpty()) {
             throw new IllegalArgumentException("Address cannot be null or empty");
         }
-        if (address.contains(",")) {
-            throw new IllegalArgumentException("Address cannot contain commas");
-        }
     }
 
     private void validateBirthday(LocalDate birthday) {
@@ -224,7 +210,7 @@ public class User {
     @Override
     public String toString() {
         return String.format("User{username='%s', fullName='%s', role='%s', email='%s', birthday=%s}",
-                username, fullName, role, email, birthday != null ? birthday.format(DATE_FORMATTER) : "null");
+                username, fullName, role, email, birthday.format(DATE_FORMATTER));
     }
 
     @Override
