@@ -111,7 +111,7 @@
                 </c:otherwise>
             </c:choose>
         </div>
-        <button id="mobileMenuTogglee" class="md:hidden text-gray-600 focus:outline-none">
+        <button id="mobileMenuToggle" class="md:hidden text-gray-600 focus:outline-none">
             <i class="fas fa-bars text-2xl"></i>
         </button>
     </div>
