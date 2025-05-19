@@ -206,22 +206,15 @@
                 <c:forEach var="user" items="${userList}">
                   <c:if test="${user.role == 'Admin'}">
                     <tr>
-                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.username}" default="N/A"/></td>
-                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.fullName}" default="N/A"/></td>
-                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.role}" default="N/A"/></td>
-                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.email}" default="N/A"/></td>
-                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.contactNo}" default="N/A"/></td>
-                      <td class="border px-4 py-3 text-gray-600">
-                        <c:if test="${not empty user.birthday}">
-                          <fmt:formatDate value="${user.birthdayAsDate}" pattern="yyyy-MM-dd"/>
-                        </c:if>
-                        <c:if test="${empty user.birthday}">
-                          N/A
-                        </c:if>
-                      </td>
-                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.gender}" default="N/A"/></td>
+                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.username}"/></td>
+                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.fullName}"/></td>
+                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.role}"/></td>
+                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.email}"/></td>
+                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.contactNo}"/></td>
+                      <td class="border px-4 py-3 text-gray-600"><fmt:formatDate value="${user.birthday}" pattern="yyyy-MM-dd"/></td>
+                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.gender}"/></td>
                       <td class="border px-4 py-3">
-                        <button onclick="openEditModal('<c:out value="${user.username}"/>', '<c:out value="${user.fullName}"/>', '<c:out value="${user.role}"/>', '<c:out value="${user.email}"/>', '<c:out value="${user.contactNo}"/>', '<c:out value="${user.address}"/>', '<c:out value="${user.birthday}"/>', '<c:out value="${user.gender}"/>')" class="text-blue-600 hover:text-blue-800 mr-2">
+                        <button onclick="openEditModal('<c:out value="${user.username}"/>', '<c:out value="${user.fullName}"/>', '<c:out value="${user.role}"/>', '<c:out value="${user.email}"/>', '<c:out value="${user.contactNo}"/>', '<c:out value="${user.address}"/>', '<fmt:formatDate value="${user.birthday}" pattern="yyyy-MM-dd"/>', '<c:out value="${user.gender}"/>')" class="text-blue-600 hover:text-blue-800 mr-2">
                           <i class="fas fa-edit"></i>
                         </button>
                         <a href="${pageContext.request.contextPath}/ManageUsersServlet?action=delete&username=<c:out value="${user.username}"/>&csrfToken=<c:out value="${sessionScope.csrfToken}"/>" class="text-red-600 hover:text-red-800" onclick="return confirm('Are you sure you want to delete this admin?')">
@@ -262,22 +255,15 @@
                 <c:forEach var="user" items="${userList}">
                   <c:if test="${user.role == 'Customer'}">
                     <tr>
-                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.username}" default="N/A"/></td>
-                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.fullName}" default="N/A"/></td>
-                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.role}" default="N/A"/></td>
-                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.email}" default="N/A"/></td>
-                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.contactNo}" default="N/A"/></td>
-                      <td class="border px-4 py-3 text-gray-600">
-                        <c:if test="${not empty user.birthday}">
-                          <fmt:formatDate value="${user.birthdayAsDate}" pattern="yyyy-MM-dd"/>
-                        </c:if>
-                        <c:if test="${empty user.birthday}">
-                          N/A
-                        </c:if>
-                      </td>
-                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.gender}" default="N/A"/></td>
+                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.username}"/></td>
+                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.fullName}"/></td>
+                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.role}"/></td>
+                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.email}"/></td>
+                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.contactNo}"/></td>
+                      <td class="border px-4 py-3 text-gray-600"><fmt:formatDate value="${user.birthday}" pattern="yyyy-MM-dd"/></td>
+                      <td class="border px-4 py-3 text-gray-600"><c:out value="${user.gender}"/></td>
                       <td class="border px-4 py-3">
-                        <button onclick="openEditModal('<c:out value="${user.username}"/>', '<c:out value="${user.fullName}"/>', '<c:out value="${user.role}"/>', '<c:out value="${user.email}"/>', '<c:out value="${user.contactNo}"/>', '<c:out value="${user.address}"/>', '<c:out value="${user.birthday}"/>', '<c:out value="${user.gender}"/>')" class="text-blue-600 hover:text-blue-800 mr-2">
+                        <button onclick="openEditModal('<c:out value="${user.username}"/>', '<c:out value="${user.fullName}"/>', '<c:out value="${user.role}"/>', '<c:out value="${user.email}"/>', '<c:out value="${user.contactNo}"/>', '<c:out value="${user.address}"/>', '<fmt:formatDate value="${user.birthday}" pattern="yyyy-MM-dd"/>', '<c:out value="${user.gender}"/>')" class="text-blue-600 hover:text-blue-800 mr-2">
                           <i class="fas fa-edit"></i>
                         </button>
                         <a href="${pageContext.request.contextPath}/ManageUsersServlet?action=delete&username=<c:out value="${user.username}"/>&csrfToken=<c:out value="${sessionScope.csrfToken}"/>" class="text-red-600 hover:text-red-800" onclick="return confirm('Are you sure you want to delete this user?')">
@@ -440,45 +426,27 @@
   });
 
   function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.style.display = 'block';
-    } else {
-      console.error(`Modal with ID ${modalId} not found`);
-    }
+    document.getElementById(modalId).style.display = 'block';
   }
 
   function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.style.display = 'none';
-    } else {
-      console.error(`Modal with ID ${modalId} not found`);
-    }
+    document.getElementById(modalId).style.display = 'none';
   }
 
   function openEditModal(username, fullName, role, email, contactNo, address, birthday, gender) {
-    try {
-      document.getElementById('editUsername').value = username || '';
-      document.getElementById('editFullName').value = fullName || '';
-      document.getElementById('editRole').value = role || 'Customer';
-      document.getElementById('editEmail').value = email || '';
-      document.getElementById('editContactNo').value = contactNo || '';
-      document.getElementById('editAddress').value = address || '';
-      document.getElementById('editBirthday').value = birthday || '';
-      document.getElementById('editGender').value = gender || 'Other';
-      openModal('editUserModal');
-    } catch (e) {
-      console.error('Error in openEditModal:', e);
-    }
+    document.getElementById('editUsername').value = username;
+    document.getElementById('editFullName').value = fullName;
+    document.getElementById('editRole').value = role;
+    document.getElementById('editEmail').value = email;
+    document.getElementById('editContactNo').value = contactNo;
+    document.getElementById('editAddress').value = address;
+    document.getElementById('editBirthday').value = birthday;
+    document.getElementById('editGender').value = gender;
+    openModal('editUserModal');
   }
 
   function validateUserForm(formId) {
     const form = document.getElementById(formId);
-    if (!form) {
-      console.error(`Form with ID ${formId} not found`);
-      return false;
-    }
     const username = form.querySelector('input[name="username"]').value;
     const password = form.querySelector('input[name="password"]') ? form.querySelector('input[name="password"]').value : '';
     const contactNo = form.querySelector('input[name="contactNo"]').value;
@@ -504,29 +472,10 @@
   }
 
   function showTab(tabId) {
-    try {
-      const tabs = document.querySelectorAll('.tab');
-      const contents = document.querySelectorAll('.tab-content');
-      const tabElement = document.querySelector(`.tab[onclick="showTab('${tabId}')"]`);
-      const contentElement = document.getElementById(tabId);
-
-      if (!tabElement) {
-        console.error(`Tab element for ${tabId} not found`);
-        return;
-      }
-      if (!contentElement) {
-        console.error(`Content element for ${tabId} not found`);
-        return;
-      }
-
-      tabs.forEach(tab => tab.classList.remove('active'));
-      contents.forEach(content => content.classList.remove('active'));
-
-      tabElement.classList.add('active');
-      contentElement.classList.add('active');
-    } catch (e) {
-      console.error(`Error in showTab for tabId: ${tabId}`, e);
-    }
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.querySelector(`.tab[onclick="showTab('${tabId}')"]`).classList.add('active');
+    document.getElementById(tabId).classList.add('active');
   }
 </script>
 </body>

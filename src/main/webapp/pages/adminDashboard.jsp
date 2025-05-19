@@ -1,263 +1,275 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="MediCare Admin Dashboard for managing products, orders, users, feedback, and audits.">
     <title>MediCare - Admin Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+        }
+        .admin-bg {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        }
         .sidebar {
+            transition: width 0.3s ease;
+        }
+        .sidebar-collapsed {
+            width: 80px;
+        }
+        .sidebar-expanded {
             width: 250px;
-            transition: all 0.3s;
         }
-        .main-content {
-            margin-left: 250px;
-            transition: all 0.3s;
+        .dashboard-card, .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .sidebar.collapsed {
-            width: 70px;
+        .dashboard-card:hover, .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-        .main-content.expanded {
-            margin-left: 70px;
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: #4b5563;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: #2563eb;
+            color: white;
+        }
+        .sidebar-link i {
+            margin-right: 12px;
+            min-width: 24px;
+        }
+        .content {
+            transition: margin-left 0.3s ease;
+        }
+        .notification {
+            transition: opacity 0.5s ease;
+        }
+        @media (max-width: 768px) {
+            .sidebar-expanded {
+                width: 200px;
+            }
+            .sidebar-collapsed {
+                width: 60px;
+            }
+            .content {
+                margin-left: 60px;
+            }
+            .sidebar-expanded .content {
+                margin-left: 200px;
+            }
         }
     </style>
 </head>
 <body class="bg-gray-100">
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <div class="sidebar bg-white shadow-lg">
-            <div class="p-4">
-                <h1 class="text-2xl font-bold text-blue-600">MediCare</h1>
-                <p class="text-gray-500 text-sm">Admin Panel</p>
-            </div>
-            <nav class="mt-4">
-                <a href="${pageContext.request.contextPath}/user-management/list" class="flex items-center px-4 py-3 text-gray-700 bg-gray-100 border-l-4 border-blue-500">
-                    <i class="fas fa-users mr-3"></i>
-                    <span>User Management</span>
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
-                    <i class="fas fa-pills mr-3"></i>
-                    <span>Products</span>
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
-                    <i class="fas fa-shopping-cart mr-3"></i>
-                    <span>Orders</span>
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
-                    <i class="fas fa-chart-bar mr-3"></i>
-                    <span>Analytics</span>
-                </a>
-                <a href="${pageContext.request.contextPath}/logout" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
-                    <i class="fas fa-sign-out-alt mr-3"></i>
-                    <span>Logout</span>
-                </a>
-            </nav>
+<c:if test="${empty sessionScope.username}">
+    <c:redirect url="${pageContext.request.contextPath}/pages/login.jsp"/>
+</c:if>
+
+<div class="flex min-h-screen">
+    <aside id="sidebar" class="sidebar sidebar-expanded bg-white shadow-lg fixed top-0 left-0 h-full z-50" aria-label="Sidebar Navigation">
+        <div class="flex items-center justify-between h-16 px-4 border-b">
+            <a href="${pageContext.request.contextPath}/pages/index.jsp" class="text-2xl font-bold text-blue-600">MediCare</a>
+            <button id="toggleSidebar" class="text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded" aria-label="Toggle Sidebar">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
         </div>
+        <nav class="mt-6" aria-label="Main Navigation">
+            <ul>
+                <li>
+                    <a href="${pageContext.request.contextPath}/AdminServlet" class="sidebar-link active" aria-current="page">
+                        <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                        <span class="sidebar-text">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/ManageProductsServlet" class="sidebar-link">
+                        <i class="fas fa-pills" aria-hidden="true"></i>
+                        <span class="sidebar-text">Manage Products</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/ManageOrdersServlet" class="sidebar-link">
+                        <i class="fas fa-clipboard-list" aria-hidden="true"></i>
+                        <span class="sidebar-text">Manage Orders</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/ManageUsersServlet" class="sidebar-link">
+                        <i class="fas fa-users" aria-hidden="true"></i>
+                        <span class="sidebar-text">Manage Users</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/ManageFeedbackServlet" class="sidebar-link">
+                        <i class="fas fa-comment-dots" aria-hidden="true"></i>
+                        <span class="sidebar-text">Manage Feedback</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/ManageAuditServlet" class="sidebar-link">
+                        <i class="fas fa-file-alt" aria-hidden="true"></i>
+                        <span class="sidebar-text">Audit Logs</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/logout" class="sidebar-link">
+                        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                        <span class="sidebar-text">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 
-        <!-- Main Content -->
-        <div class="main-content flex-1 p-8">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">User Management</h2>
-                <button onclick="showAddUserModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                    <i class="fas fa-plus mr-2"></i>Add New User
-                </button>
-            </div>
-
-            <!-- Error Message -->
-            <c:if test="${not empty error}">
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <span class="block sm:inline">${error}</span>
-                </div>
-            </c:if>
-
-            <!-- User List -->
-            <div class="bg-white rounded-lg shadow-md">
-                <div class="p-4">
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="flex space-x-4">
-                            <input type="text" id="searchInput" placeholder="Search users..." class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-                            <select id="roleFilter" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                <option value="all">All Roles</option>
-                                <option value="admin">Admin</option>
-                                <option value="user">User</option>
-                            </select>
-                        </div>
-                    </div>
-                    <table class="w-full">
-                        <thead>
-                            <tr class="text-left border-b">
-                                <th class="pb-3">Username</th>
-                                <th class="pb-3">Role</th>
-                                <th class="pb-3">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${users}" var="user">
-                                <tr class="border-b">
-                                    <td class="py-3">${user.username}</td>
-                                    <td>${user.role}</td>
-                                    <td>
-                                        <button onclick="showEditUserModal('${user.username}', '${user.role}')" class="text-blue-600 hover:text-blue-800 mr-2">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button onclick="showDeleteUserModal('${user.username}')" class="text-red-600 hover:text-red-800">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
+    <main class="flex-1 content ml-[250px] p-6" aria-label="Main Content">
+        <nav class="bg-white shadow-lg rounded-lg p-4 mb-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800">Welcome, <c:out value="${fn:escapeXml(sessionScope.username)}"/></h2>
+                <div class="flex items-center space-x-4">
+                    <span id="notification" class="text-sm text-green-600 hidden" role="alert"></span>
+                    <a href="${pageContext.request.contextPath}/logout" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Logout</a>
                 </div>
             </div>
-        </div>
-    </div>
+        </nav>
 
-    <!-- Add User Modal -->
-    <div id="addUserModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div class="mt-3">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Add New User</h3>
-                <form action="${pageContext.request.contextPath}/user-management/add" method="POST">
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                            Username
-                        </label>
-                        <input type="text" id="username" name="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+        <section class="admin-bg text-white py-12 rounded-lg mb-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold mb-8 text-center">Dashboard Overview</h1>
+                <div class="dashboard-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                    <div class="dashboard-card bg-white text-gray-800 p-6 rounded-lg shadow-md text-center" role="button" tabindex="0" onclick="window.location.href='${pageContext.request.contextPath}/ManageProductsServlet'" onkeydown="if(event.key === 'Enter') window.location.href='${pageContext.request.contextPath}/ManageProductsServlet'">
+                        <i class="fas fa-pills text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
+                        <h3 class="text-xl font-semibold mb-2">Total Products</h3>
+                        <p class="text-2xl font-bold text-gray-600"><c:out value="${totalProducts}" default="0"/></p>
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                            Password
-                        </label>
-                        <input type="password" id="password" name="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <div class="dashboard-card bg-white text-gray-800 p-6 rounded-lg shadow-md text-center" role="button" tabindex="0" onclick="window.location.href='${pageContext.request.contextPath}/ManageOrdersServlet'" onkeydown="if(event.key === 'Enter') window.location.href='${pageContext.request.contextPath}/ManageOrdersServlet'">
+                        <i class="fas fa-clipboard-list text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
+                        <h3 class="text-xl font-semibold mb-2">Total Orders</h3>
+                        <p class="text-2xl font-bold text-gray-600"><c:out value="${totalOrders}" default="0"/></p>
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="role">
-                            Role
-                        </label>
-                        <select id="role" name="role" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
-                        </select>
+                    <div class="dashboard-card bg-white text-gray-800 p-6 rounded-lg shadow-md text-center" role="button" tabindex="0" onclick="window.location.href='${pageContext.request.contextPath}/ManageUsersServlet'" onkeydown="if(event.key === 'Enter') window.location.href='${pageContext.request.contextPath}/ManageUsersServlet'">
+                        <i class="fas fa-users text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
+                        <h3 class="text-xl font-semibold mb-2">Active Users</h3>
+                        <p class="text-2xl font-bold text-gray-600"><c:out value="${activeUsers}" default="0"/></p>
                     </div>
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="hideAddUserModal()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
-                            Cancel
-                        </button>
-                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                            Add User
-                        </button>
+                    <div class="dashboard-card bg-white text-gray-800 p-6 rounded-lg shadow-md text-center" role="button" tabindex="0" onclick="alert('Pending Orders: ${fn:escapeXml(pendingOrders)}')" onkeydown="if(event.key === 'Enter') alert('Pending Orders: ${fn:escapeXml(pendingOrders)}')">
+                        <i class="fas fa-exclamation-triangle text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
+                        <h3 class="text-xl font-semibold mb-2">Pending Orders</h3>
+                        <p class="text-2xl font-bold text-gray-600"><c:out value="${pendingOrders}" default="0"/></p>
                     </div>
-                </form>
+                    <div class="dashboard-card bg-white text-gray-800 p-6 rounded-lg shadow-md text-center" role="button" tabindex="0" onclick="window.location.href='${pageContext.request.contextPath}/ManageFeedbackServlet'" onkeydown="if(event.key === 'Enter') window.location.href='${pageContext.request.contextPath}/ManageFeedbackServlet'">
+                        <i class="fas fa-comment-dots text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
+                        <h3 class="text-xl font-semibold mb-2">Total Feedback</h3>
+                        <p class="text-2xl font-bold text-gray-600"><c:out value="${totalFeedback}" default="0"/></p>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- Edit User Modal -->
-    <div id="editUserModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div class="mt-3">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Edit User</h3>
-                <form action="${pageContext.request.contextPath}/user-management/update" method="POST">
-                    <input type="hidden" id="editUsername" name="username">
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="editPassword">
-                            New Password
-                        </label>
-                        <input type="password" id="editPassword" name="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+        <section class="admin-bg text-white py-12 rounded-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold mb-8 text-center">Admin Dashboard</h1>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                    <div class="card-hover bg-white text-gray-800 p-6 rounded-lg shadow-md transition duration-300">
+                        <i class="fas fa-pills text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
+                        <h3 class="text-xl font-semibold mb-2">Manage Products</h3>
+                        <p class="text-gray-600 mb-4">Add, update, or remove products from the store.</p>
+                        <a href="${pageContext.request.contextPath}/ManageProductsServlet" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Products</a>
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="editRole">
-                            Role
-                        </label>
-                        <select id="editRole" name="role" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
-                        </select>
+                    <div class="card-hover bg-white text-gray-800 p-6 rounded-lg shadow-md transition duration-300">
+                        <i class="fas fa-clipboard-list text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
+                        <h3 class="text-xl font-semibold mb-2">View Orders</h3>
+                        <p class="text-gray-600 mb-4">Check and manage customer orders.</p>
+                        <a href="${pageContext.request.contextPath}/ManageOrdersServlet" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Orders</a>
                     </div>
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="hideEditUserModal()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
-                            Cancel
-                        </button>
-                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                            Update User
-                        </button>
+                    <div class="card-hover bg-white text-gray-800 p-6 rounded-lg shadow-md transition duration-300">
+                        <i class="fas fa-users text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
+                        <h3 class="text-xl font-semibold mb-2">Manage Users</h3>
+                        <p class="text-gray-600 mb-4">View and manage user accounts.</p>
+                        <a href="${pageContext.request.contextPath}/ManageUsersServlet" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Users</a>
                     </div>
-                </form>
+                    <div class="card-hover bg-white text-gray-800 p-6 rounded-lg shadow-md transition duration-300">
+                        <i class="fas fa-comment-dots text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
+                        <h3 class="text-xl font-semibold mb-2">Manage Feedback</h3>
+                        <p class="text-gray-600 mb-4">Review and respond to customer feedback.</p>
+                        <a href="${pageContext.request.contextPath}/ManageFeedbackServlet" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Feedback</a>
+                    </div>
+                    <div class="card-hover bg-white text-gray-800 p-6 rounded-lg shadow-md transition duration-300">
+                        <i class="fas fa-file-alt text-4xl text-blue-600 mb-4" aria-hidden="true"></i>
+                        <h3 class="text-xl font-semibold mb-2">Audit Logs</h3>
+                        <p class="text-gray-600 mb-4">View system activity and audit logs.</p>
+                        <a href="${pageContext.request.contextPath}/ManageAuditServlet" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600">Go to Audits</a>
+                    </div>
+                </div>
             </div>
+        </section>
+    </main>
+</div>
+
+<footer class="bg-gray-800 text-white py-8 mt-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <p class="text-gray-400">© <%= java.time.Year.now().getValue() %> MediCare. All rights reserved.</p>
         </div>
     </div>
+</footer>
 
-    <!-- Delete User Modal -->
-    <div id="deleteUserModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div class="mt-3">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Delete User</h3>
-                <p class="text-gray-600 mb-4">Are you sure you want to delete this user?</p>
-                <form action="${pageContext.request.contextPath}/user-management/delete" method="POST">
-                    <input type="hidden" id="deleteUsername" name="username">
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="hideDeleteUserModal()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
-                            Cancel
-                        </button>
-                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
-                            Delete User
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+<script>
+    (function () {
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const content = document.querySelector('.content');
+        const sidebarTexts = document.querySelectorAll('.sidebar-text');
+        const notification = document.getElementById('notification');
 
-    <script>
-        // Modal functions
-        function showAddUserModal() {
-            document.getElementById('addUserModal').classList.remove('hidden');
+        // Toggle sidebar
+        toggleSidebar.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-expanded');
+            sidebar.classList.toggle('sidebar-collapsed');
+            updateSidebar();
+        });
+
+        function updateSidebar() {
+            if (sidebar.classList.contains('sidebar-collapsed')) {
+                content.style.marginLeft = '80px';
+                sidebarTexts.forEach(text => text.style.display = 'none');
+            } else {
+                content.style.marginLeft = '250px';
+                sidebarTexts.forEach(text => text.style.display = 'inline');
+            }
         }
 
-        function hideAddUserModal() {
-            document.getElementById('addUserModal').classList.add('hidden');
+        // Show notification
+        function showNotification(message, type = 'success') {
+            notification.textContent = message;
+            notification.className = `text-sm ${type == 'success' ? 'text-green-600' : 'text-red-600'} hidden`;
+            notification.classList.remove('hidden');
+            setTimeout(() => {
+                notification.classList.add('opacity-0');
+                setTimeout(() => notification.classList.add('hidden'), 500);
+            }, 3000);
         }
 
-        function showEditUserModal(username, role) {
-            document.getElementById('editUsername').value = username;
-            document.getElementById('editRole').value = role;
-            document.getElementById('editUserModal').classList.remove('hidden');
-        }
+        // Initialize sidebar state
+        updateSidebar();
 
-        function hideEditUserModal() {
-            document.getElementById('editUserModal').classList.add('hidden');
-        }
-
-        function showDeleteUserModal(username) {
-            document.getElementById('deleteUsername').value = username;
-            document.getElementById('deleteUserModal').classList.remove('hidden');
-        }
-
-        function hideDeleteUserModal() {
-            document.getElementById('deleteUserModal').classList.add('hidden');
-        }
-
-        // Search and filter functionality
-        document.getElementById('searchInput').addEventListener('input', filterUsers);
-        document.getElementById('roleFilter').addEventListener('change', filterUsers);
-
-        function filterUsers() {
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
-            const roleFilter = document.getElementById('roleFilter').value;
-            const rows = document.querySelectorAll('tbody tr');
-
-            rows.forEach(row => {
-                const username = row.cells[0].textContent.toLowerCase();
-                const role = row.cells[1].textContent.toLowerCase();
-                const matchesSearch = username.includes(searchText);
-                const matchesRole = roleFilter === 'all' || role === roleFilter;
-                row.style.display = matchesSearch && matchesRole ? '' : 'none';
-            }  );
-        }
-    </script>
+        // Expose showNotification to global scope for server-side calls
+        window.showNotification = showNotification;
+    })();
+</script>
 </body>
 </html>
