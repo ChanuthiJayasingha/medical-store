@@ -52,28 +52,14 @@ public class ManageUsersServlet extends HttpServlet {
 
             List<String> lines = userFileHandler.readLines();
             List<User> users = new ArrayList<>();
-            int lineNumber = 0;
-
             for (String line : lines) {
-                lineNumber++;
-                // Handle extra commas and trim whitespace
-                line = line.replaceAll(",\\s*,", ",").replaceAll(",\\s*$", "").trim();
+                // Handle extra commas by replacing multiple commas with a single comma
+                line = line.replaceAll(",\\s*,", ",").replaceAll(",\\s*$", "");
                 String[] parts = line.split(",");
                 if (parts.length == 9) {
                     try {
                         String role = parts[3].trim().equalsIgnoreCase("User") ? "Customer" : parts[3].trim();
-                        LocalDate birthday;
-                        try {
-                            birthday = LocalDate.parse(parts[7].trim(), DATE_FORMATTER);
-                        } catch (Exception e) {
-                            LOGGER.warning("Invalid birthday format at line " + lineNumber + ": " + line + " | Error: " + e.getMessage());
-                            continue;
-                        }
-                        if (birthday.isAfter(LocalDate.now())) {
-                            LOGGER.warning("Invalid birthday (future date) at line " + lineNumber + ": " + line);
-                            continue;
-                        }
-                        User user = new User(
+                        users.add(new User(
                                 parts[0].trim(), // fullName
                                 parts[1].trim(), // username
                                 parts[2].trim(), // password
@@ -81,36 +67,22 @@ public class ManageUsersServlet extends HttpServlet {
                                 parts[4].trim(), // contactNo
                                 parts[5].trim(), // email
                                 parts[6].trim(), // address
-                                birthday, // birthday
+                                LocalDate.parse(parts[7].trim(), DATE_FORMATTER), // birthday
                                 parts[8].trim() // gender
-                        );
-                        if (user.getBirthday() != null) {
-                            users.add(user);
-                        } else {
-                            LOGGER.warning("Skipping user with null birthday at line " + lineNumber + ": " + line);
-                        }
-                    } catch (IllegalArgumentException e) {
-                        LOGGER.warning("Invalid user data at line " + lineNumber + ": " + line + " | Error: " + e.getMessage());
+                        ));
                     } catch (Exception e) {
-                        LOGGER.warning("Unexpected error parsing user data at line " + lineNumber + ": " + line + " | Error: " + e.getMessage());
+                        LOGGER.warning("Invalid user data in line: " + line + " | Error: " + e.getMessage());
                     }
                 } else {
-                    LOGGER.warning("Malformed user data (incorrect number of fields) at line " + lineNumber + ": " + line);
+                    LOGGER.warning("Malformed user data (incorrect number of fields): " + line);
                 }
             }
-
             request.setAttribute("userList", users);
-            if (users.isEmpty()) {
-                session.setAttribute("notification", "No valid users found. Check users.txt for errors.");
-                session.setAttribute("notificationType", "error");
-            }
             request.getRequestDispatcher("/pages/manage-users.jsp").forward(request, response);
         } catch (Exception e) {
             LOGGER.severe("Error processing ManageUsersServlet GET request: " + e.getMessage());
-            e.printStackTrace(); // Log full stacktrace for debugging
             session.setAttribute("notification", "Failed to load users: " + e.getMessage());
             session.setAttribute("notificationType", "error");
-            request.setAttribute("userList", new ArrayList<User>()); // Set empty list to prevent null
             request.getRequestDispatcher("/pages/manage-users.jsp").forward(request, response);
         }
     }
@@ -146,7 +118,7 @@ public class ManageUsersServlet extends HttpServlet {
                 String role = request.getParameter("role");
                 String contactNo = request.getParameter("contactNo");
                 String email = request.getParameter("email");
-                String address = request.getParameter("address").replace(",", " ");
+                String address = request.getParameter("address");
                 String birthday = request.getParameter("birthday");
                 String gender = request.getParameter("gender");
 
@@ -170,7 +142,7 @@ public class ManageUsersServlet extends HttpServlet {
                 String role = request.getParameter("role");
                 String contactNo = request.getParameter("contactNo");
                 String email = request.getParameter("email");
-                String address = request.getParameter("address").replace(",", " ");
+                String address = request.getParameter("address");
                 String birthday = request.getParameter("birthday");
                 String gender = request.getParameter("gender");
 
@@ -257,12 +229,9 @@ public class ManageUsersServlet extends HttpServlet {
             throw new IllegalArgumentException("Invalid email format.");
         }
         try {
-            LocalDate parsedBirthday = LocalDate.parse(birthday, DATE_FORMATTER);
-            if (parsedBirthday.isAfter(LocalDate.now())) {
-                throw new IllegalArgumentException("Birthday cannot be in the future.");
-            }
+            LocalDate.parse(birthday, DATE_FORMATTER);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid birthday format: " + e.getMessage());
+            throw new IllegalArgumentException("Invalid birthday format.");
         }
         if (!gender.equals("Male") && !gender.equals("Female") && !gender.equals("Other")) {
             throw new IllegalArgumentException("Invalid gender specified.");
